@@ -1,0 +1,114 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{hmargin=2.5cm,vmargin=2.5cm}
+\usepackage{mathtools} %\usepackage{align}
+%\usepackage[french]{babel}
+
+\title{SOD333 - Rapport}
+\author{Paul-Antoine Leveilley \& Mila Rocco}
+\date{September 2022}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+Chaque rapport de TP doit faire environ 5 pages.
+\end{center}
+
+
+
+
+
+
+
+\newpage
+\section{TP1 : titre du TP}
+
+\subsection{Introduction}
+On étudie la loi d'espérance µ définie ci-dessous, où la fonction de densité q de l'échantillon étudié est inconnue :
+$$\mu = \int_0^1 g(x)q(x)dx = \int_0^1 cos(\frac{\pi x}{2})dx\ (=\frac{2}{\pi})$$
+
+ \subsection{Application "brute" de la Méthode de Monte Carlo}
+On décide d'étudier l'échantillon $(X_i)_{1\leq i \leq N}$ , qui suit la loi uniforme sur $[0;1]$ afin de vérifier qu'on estime bien µ avec la méthode de Monte Carlo. Sa fonction de densité est donc $q=U([0;1])$. On choisira $N=50$ pour l'étude empirique du problème.
+
+Pour évaluer µ, on applique la méthode de Monte Carlo, et on obtient l'approximation 
+$$\hat{\mu}_N = \frac{1}{N} \sum_{i=1}^N g(X_i)$$
+
+- Calculer la variance théorique\\
+\begin{align*} 
+  Var(\hat{\mu}_N) &= \frac1{N^2} \sum_{i=1}^N Var(g(X_i))\\ 
+  &= \frac1{N^2}\times N Var(cos(\frac{\pi X}2)) \\ 
+  &= \frac1{N} \left ( \int_0^1 cos^2(\frac{\pi x}2)dx - \left ( \int_0^1 cos(\frac{\pi x}2)dx \right )^2 \right )\\
+  &= \frac1{N} \left ( \int_0^1 \frac{1+cos(\pi x)}{2}dx - 
+   \frac4{\pi^2} \right )\\
+  &= \frac1{N} \left ( \frac{1}{2} - 
+   \frac4{\pi^2} \right )\\
+\end{align*}
+
+- Estimer empiriquement la variance (prendre N = 50)\\
+\textbf{résultats du TP.}
+On applique la méthode de Monte Carlo et on en tire un échantillon de $NbMC=1000$ tirages.
+
+\subsection{Echantillonage pondéré}
+On génère un nouvel échantillon $(X_i)_{1\leq i \leq N}$ suivant maintenant une fonction d'importance (FI) $\Tilde{q}$ au plus proche de $g(x)$: $X_i \hookrightarrow \Tilde{q}$. Le changement de probabilité donne : 
+$$ \hat{\mu}_N = \frac1{N} \sum_{i=1}^N g(X_i)\frac{q(X_i)}{\Tilde{q}(X_i)}\ \overset{p.s.}{\longrightarrow}\ \mu $$
+
+- Chercher une bonne FI\\
+(idée : DL à l'ordre 2 au voisinage de 0)  \\
+On approxime la fonction g par son développement à l'ordre 2 en 0. Rappelons le développement limité en 0 de la fonction cosinus: 
+$ cos(x) = 1 - \frac{x^2}{2} + o(x^2) $.
+On prend donc pour Fonction d'Importance : 
+$$\Tilde{q}(x):= 1 - \frac{\pi^2}{8} x^2$$
+$$(Prof :\ \Tilde{q}(x):= \frac32(1 - x^2)$$
+
+- Calculer la variance théorique\\
+\textbf{Application numérique (TP) :}
+
+- Utiliser la méthode de rejet pour  générer suivant la FI \\ (Comparer la probabilité d’acceptation théorique à celle obtenue par simulations)\\
+On génère un échantillon suivant $p$
+$$p(x) = \frac{g(x)q(x)}{\int_0^1 g(x)q(x)dx}$$
+
+- Estimer empiriquement la variance.\\
+
+
+
+\subsection{Conclusion}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section{TP2 : titre du TP}
+\subsection{Introduction}
+\subsection{Titre intermédiaire}
+\subsection{Conclusion}
+
+\newpage
+\section{TP3 : titre du TP}
+\subsection{Introduction}
+\subsection{Titre intermédiaire}
+\subsection{Conclusion}
+
+\newpage
+\section{TP4 : titre du TP}
+\subsection{Introduction}
+\subsection{Titre intermédiaire}
+\subsection{Conclusion}
+
+\end{document}
