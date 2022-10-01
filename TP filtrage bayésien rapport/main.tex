@@ -64,20 +64,43 @@ $$\Tilde{q}(x):= 1 - \frac{\pi^2}{8} x^2$$
 $$(Prof :\ \Tilde{q}(x):= \frac32(1 - x^2)$$
 
 - Calculer la variance théorique\\
+\begin{align*} 
+  Var(\hat{\mu}_N) &= \frac1{N^2} \sum_{i=1}^N Var \left ( g(X_i)\frac{q(X_i)}{\Tilde{q}(X_i)}\right)\\ 
+  &= \frac1{N} Var\left (\frac{cos(\frac{\pi X}2)}{1 - \frac{\pi^2}{8} X^2} \right ) \\ 
+  &= \frac1{N} \left ( \int_0^1 \left (\frac{cos(\frac{\pi x}2)}{1 - \frac{\pi^2}{8} x^2} \right )^2dx - \left ( \int_0^1 \frac{cos(\frac{\pi x}2)}{1 - \frac{\pi^2}{8} x^2}dx \right )^2 \right )\\
+\end{align*}
 \textbf{Application numérique (TP) :}
+\\
 
 - Utiliser la méthode de rejet pour  générer suivant la FI \\ (Comparer la probabilité d’acceptation théorique à celle obtenue par simulations)\\
-On génère un échantillon suivant $p$
-$$p(x) = \frac{g(x)q(x)}{\int_0^1 g(x)q(x)dx}$$
+On génère un échantillon suivant $p$ et on choisit pour majorant de $g$, $C=1$ tels que 
+$$p(x) = \frac{g(x)q(x)}{\int_0^1 g(x)q(x)dx}\ \ \ \ \&\ \ \ \ g(x) \leq C,\ \forall x \in [0;1] $$
+
+Probabilité d'acceptation théorique : 
+$$P_a = \frac1C \int_0^1 g(x)q(x)dx 
+= \int_0^1 cos(\frac{\pi x}{2})dx 
+=\frac{2}{\pi} 
+\approx 0,637$$
 
 - Estimer empiriquement la variance.\\
-
-
+\textbf{résultats du TP.}
 
 \subsection{Conclusion}
+On cherche maintenant à comparer les deux méthodes précédemment appliquées.
+
+- Comparer le rapport des variances des 2 méthodes. Théoriquement et par simulations\\
 
 
+- Valider par simulations les TCL pour les 2 méthodes en comparant la loi théorique (loi normale) à la loi empirique (histogramme)\\
 
+
+- Comparer les budgets pour chaque méthode\\
+
+
+- Calculer la variance de l’estimateur en prenant la FI optimale\\
+
+
+- Même travail avec $\Tilde{q}=2(1-x)$, ici on simule la FI par la méthode d’inversion de la CDF\\
 
 
 
