@@ -5,6 +5,7 @@
 \usepackage{mathtools} %\usepackage{align}
 %\usepackage[french]{babel}
 \usepackage{graphicx}
+\usepackage{bbold}
 
 \title{SOD333 - Rapport}
 \author{Paul-Antoine Leveilley \& Mila Rocco}
@@ -18,18 +19,33 @@
 
 \end{center}
 
-
+\newpage
+\tableofcontents
+\newpage
 
 
 
 
 
 \newpage
-\section{TP1: calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel}
+\section{TP1: calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel.}
 
 \subsection{Introduction}
-On étudie la loi d'espérance µ définie ci-dessous, où la fonction de densité q de l'échantillon étudié est inconnue:
-$$\mu = \int_0^1 g(x)q(x)dx = \int_0^1 cos(\frac{\pi x}{2})dx\ (=\frac{2}{\pi})$$
+
+Dans ce TP, on se propose de calculer une intégrale par méthode de Monte Carlo. De manière générale, la méthode de Monte Carlo
+consisite à approcher l'intégrale : 
+\[I = \int g(x)q(x)dx\] 
+Ou q est une densité, par l'estimateur : 
+\[\hat{\mu}_N = \frac{1}{N} \sum_{i=1}^N g(X_i)\]
+
+En effet, d'après la loi forte des grands nombres, 
+\[\hat{\mu}_N\underset{p.s.}{\longrightarrow}I \]
+
+Pour illustrer cette méthode, nous allons estimer l'intégrale 
+\[\int_0^1 cos(\frac{\pi x}{2})dx\]
+Dont la valeur se calcule analytiquement, et vaut $\frac{2}{\pi}$
+
+Pour ce faire, on choisit la loi uniforme sur $[0,1]$, qui admet pour densité $q(x) = \mathbb{1}_{x \in [0,1]}$, ainsi que $g(x) = \cos (\frac{\pi x}{2})$
 
  \subsection{Application "brute" de la Méthode de Monte Carlo}
 On décide d'étudier l'échantillon $(X_i)_{1\leq i \leq N}$ , qui suit la loi uniforme sur $[0;1]$ afin de vérifier qu'on estime bien µ avec la méthode de Monte Carlo. Sa fonction de densité est donc $q=U([0;1])$. On choisira $N=50$ pour l'étude empirique du problème.
@@ -174,7 +190,7 @@ La borne de Cramer Rao à l'instant $k$ est alors égale à l'inverse de la matr
 
 Nous étudions le système suivant : un bateau émetteur de bruit se déplace dans le plan de manière rectiligne uniforme. 
 Un bateau observateur mesure la direction d'ou lui parvient le bruit, plus précisément, il mesure l'angle $\theta_{k}$ que fait cette direction avec l'horizontale, ce toute les secondes pendant 100s. Le bateau observateur se déplace également en ligne droite à vitesse constante.
-Si l'état de l'émeteur est donné par sa position et sa vitesse : $X_{k} = (x_{k},y_{k},\dot{x}_{k},\dot{y}_{k})$, sa matrice de transition est :
+L'état de l'émeteur est donné par sa position et sa vitesse : $X_{k} = (x_{k},y_{k},\dot{x}_{k},\dot{y}_{k})$, sa matrice de transition est :
 \[\phi(k,k+1) = \phi =  \begin{pmatrix}
   1 & 0 & T & 0 \\
   0 & 1 & 0 & T \\
@@ -183,8 +199,8 @@ Si l'état de l'émeteur est donné par sa position et sa vitesse : $X_{k} = (x_
   \end{pmatrix}\]
 
 Pour pouvoir discriminer entre différentes
-trajectoires possibles, le bateau doit virer de bord à un certain moment. Si ça n'est pas le cas, on peut vérifier que des trajectoires différentes peuvent donner lieu à des mesures d'angle identiques.
-Pour simplifier l'étude, on suppose que le bateau vire de bord toujours au même moment : au milieu du trajet. Le bateau observateur choisit l'angle $\varphi $ duquel il tourne. Chaque choix de $\varphi$ 
+trajectoires possibles, le bateau doit virer de bord à un certain moment. En effet on peut vérifier que s'il ne le fait pas, des trajectoires différentes peuvent donner lieu à des mesures d'angle identiques.
+Pour simplifier l'étude, on suppose que le bateau vire de bord toujours au même moment : au milieu du trajet; à l'instant $k = 50s$. Le bateau observateur choisit l'angle $\varphi $ duquel il tourne. Chaque choix de $\varphi$ 
 conduit à une précision différente de l'estimation de la trajectoire  de l'émeteur.
 La question est donc la suivante : quel choix de $\varphi$ est le meilleur pour estimer la trajectoire de l'émeteur?
 \\
@@ -219,9 +235,9 @@ Nous avons simulé la dynamique du système pour différents changements de cap 
     \hline Horizon temporel & $T = 1$ \\
     \hline Nombre de mesures  & $N=100$ \\
     \hline Ecart type du bruit & $\sigma_{k}=1^{\circ}$\\
-    \hline Vitesse de l'observateur & $V_{o}=10 m.s^{-2}$\\
+    \hline Vitesse de l'observateur & $V_{o}=10 m.s^{-1}$\\
     \hline Position initiale de l'observateur &  $(x_{0}^{o},y_{0}^{o})=(0,0)$ m\\
-    \hline Vitesse de l'émetteur & $V_{e} = 5 m.s^{-2}$\\
+    \hline Vitesse de l'émetteur & $V_{e} = 5 m.s^{-1}$\\
     \hline Cap de l'émetteur & $\alpha =-20^{\circ}$\\
     \hline Position initiale de l'émetteur & $(x_{0},y_{0})=(2000,2000)$\\
     \hline Incertitude initiale sur la position de l'émetteur & $P_{0}=diag(1000,1000,10,10)^{2}$\\
