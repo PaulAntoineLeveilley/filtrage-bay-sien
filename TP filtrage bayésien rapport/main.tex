@@ -15,7 +15,7 @@
 \maketitle
 
 \begin{center}
-Chaque rapport de TP doit faire environ 5 pages.
+
 \end{center}
 
 
@@ -25,7 +25,7 @@ Chaque rapport de TP doit faire environ 5 pages.
 
 
 \newpage
-\section{TP1: titre du TP}
+\section{TP1: calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel}
 
 \subsection{Introduction}
 On étudie la loi d'espérance µ définie ci-dessous, où la fonction de densité q de l'échantillon étudié est inconnue:
@@ -151,11 +151,123 @@ Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de retrouv
 \subsection{Conclusion}
 
 \newpage
-\section{TP3: titre du TP}
+\section{TP3 : Borne de Cramer Rao.}
 \subsection{Introduction}
-\subsection{Titre intermédiaire}
-\subsection{Conclusion}
+\subsubsection{Formulation du problème}
 
+Dans ce TP, on se propose de calculer une borne de Cramer Rao pour un problème de filtrage. Le cadre général est le suivant.
+On se donne un système  $(X_{k})_{k\geq 0}$ sujet à une certaine dynamique,
+ainsi qu'une série de mesures bruitées $(y_{k})_{k \geq 0}$ (bruit gaussien de variance $\sigma_{k}^{2}$) : 
+\[\left\{\begin{array}{ll}
+   X_{k+1} = \phi(k,k+1)X_{k} \\
+   y_{k}=h_{k}(X_{k})+\epsilon_{k}
+\end{array}\right. \]
+
+Avec $X_{0} \sim  \mathcal{N} (X_{\nu},P_{0})$. On peut montrer que la matrice d'information ralative à l'instant $k$ vérifie
+la relation de récurence suivante : 
+
+\[ J_{k} = \frac{1}{\sigma_{k}}\left(\frac{\partial h_{k}}{\partial X_{k}}\right)\left(\frac{\partial h_{k}}{\partial X_{k}}\right)^{T}+\left(\frac{\partial X_{k-1}}{\partial X_{k}}\right)^{T}J_{k-1}\left(\frac{\partial X_{k-1}}{\partial X_{k}}\right)\]
+
+Avec $J_{0}=P_{0}^{-1}$ et $\phi(k,k+1)=\frac{\partial X_{k+1}}{\partial X_{k}}$.
+La borne de Cramer Rao à l'instant $k$ est alors égale à l'inverse de la matrice d'information : 
+\[BCR_{k}= J_{k}^{-1}\]
+
+Nous étudions le système suivant : un bateau émetteur de bruit se déplace dans le plan de manière rectiligne uniforme. 
+Un bateau observateur mesure la direction d'ou lui parvient le bruit, plus précisément, il mesure l'angle $\theta_{k}$ que fait cette direction avec l'horizontale, ce toute les secondes pendant 100s. Le bateau observateur se déplace également en ligne droite à vitesse constante.
+Si l'état de l'émeteur est donné par sa position et sa vitesse : $X_{k} = (x_{k},y_{k},\dot{x}_{k},\dot{y}_{k})$, sa matrice de transition est :
+\[\phi(k,k+1) = \phi =  \begin{pmatrix}
+  1 & 0 & T & 0 \\
+  0 & 1 & 0 & T \\
+  0 & 0 & 1 & 0 \\
+  0 & 0 & 0 & 1 
+  \end{pmatrix}\]
+
+Pour pouvoir discriminer entre différentes
+trajectoires possibles, le bateau doit virer de bord à un certain moment. Si ça n'est pas le cas, on peut vérifier que des trajectoires différentes peuvent donner lieu à des mesures d'angle identiques.
+Pour simplifier l'étude, on suppose que le bateau vire de bord toujours au même moment : au milieu du trajet. Le bateau observateur choisit l'angle $\varphi $ duquel il tourne. Chaque choix de $\varphi$ 
+conduit à une précision différente de l'estimation de la trajectoire  de l'émeteur.
+La question est donc la suivante : quel choix de $\varphi$ est le meilleur pour estimer la trajectoire de l'émeteur?
+\\
+Pour répondre à cette question, nous allons simuler la dynamique de l'éméteur et de l'observateur. Grâce à ces dynamiques, nous allons
+calculer le gradient de la fonction d'observation et nous allons en déduire la matrice d'information.
+Dans notre cas, la fonction d'observation est l'angle que fait la direction d'observation avec l'horizontale. 
+En terme de l'abscisse et de l'ordonnée de l'éméteur et de l'observateur, cette fonction s'écrit : 
+\[\theta_{k} = h_{k}(X_{k})=\arctan \left(\frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}\right)\]
+
+En inversant la matrice d'observation, on obtiendra la borne de Cramer Rao, sous forme d'une matrice carrée d'ordre 4.
+On cherchera ensuite la valeur de $\varphi$ qui minimise le critère : $\sqrt{\sigma_{x_{n}}^{2}+\sigma_{y_{n}}^{2}}$
+
+\subsubsection{Calcul du gradient de $h_{k}$ par rapport à $X_{k}$}
+Déjà, on voit facilement que : 
+\[\frac{\partial h_{k}}{\partial \dot{x}_{k}} = 0 \] et :
+\[\frac{\partial h_{k}}{\partial \dot{y}_{k}} = 0 \]
+Ensuite, par le calcul, on a que : 
+\[\frac{\partial h_{k}}{\partial x_{k}}=\frac{y_{k}^{o}-y_{k}}{\left(x_{k}-x_{k}^{o}\right)^{2}\left(1+\left(\frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}\right)^{2}\right)}\]
+et :
+
+\[\frac{\partial h_{k}}{\partial y_{k}}= \frac{1}{\left(x_{k}-x_{k}^{o}\right)\left(1+\left( \frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}  \right)^{2}\right)}\]
+\subsection{Simulations des dynamiques de l'observateur et de l'émetteur}
+Nous avons simulé la dynamique du système pour différents changements de cap de l'observateur, avec les paramètres du tableau \ref{paramètres}.
+ Nous obtenons les tracés de la figure \ref{trajectoire}
+
+
+\begin{figure}[h!]
+  \centering
+  \caption{Paramètres pour la simulation}
+  \label{paramètres}
+  \begin{tabular}{|*{11}{c|}}
+    \hline Horizon temporel & $T = 1$ \\
+    \hline Nombre de mesures  & $N=100$ \\
+    \hline Ecart type du bruit & $\sigma_{k}=1^{\circ}$\\
+    \hline Vitesse de l'observateur & $V_{o}=10 m.s^{-2}$\\
+    \hline Position initiale de l'observateur &  $(x_{0}^{o},y_{0}^{o})=(0,0)$ m\\
+    \hline Vitesse de l'émetteur & $V_{e} = 5 m.s^{-2}$\\
+    \hline Cap de l'émetteur & $\alpha =-20^{\circ}$\\
+    \hline Position initiale de l'émetteur & $(x_{0},y_{0})=(2000,2000)$\\
+    \hline Incertitude initiale sur la position de l'émetteur & $P_{0}=diag(1000,1000,10,10)^{2}$\\
+    \hline
+  \end{tabular}
+\end{figure}
+
+
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width = 15cm]{TP3/trajectoires.png}
+  \label{trajectoire}
+  \caption{Trajectoires de l'émetteur et de l'observateur pour différentes valeurs de l'angle $\varphi$}
+\end{figure}
+
+Grâce à ces dynamiques, nous sommes capables de calculer la Borne de Cramer Rao associée à cet estimateur de la position de l'émetteur. 
+Nous présentons ces résultat en figure \ref{cramerrao}. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width = 15cm]{TP3/cramer rao.png}
+  \caption{Borne de Cramer Rao pour l'abscisse et l'ordonnée de la position de l'émetteur au cours du temps, pour différentes valeurs de $\varphi$}
+  \label{cramerrao}
+\end{figure}
+
+\subsection{Optimisation de la valeur de $\varphi$}
+Pour trouver la valeur de $\varphi$ optimale, nous avons simplement testé toutes les valeurs entre $0^{\circ}$ et $360^{\circ}$, avec un pas de 
+$1^{\circ}$. Nous avons trouvé une valeur optimale de $\varphi = 109^{\circ}$, ce qui correspond à la trajectoire représentée en figure
+\ref{optimale}. La borne de Cramer Rao associée est représentée en figure \ref{crameropti}. Le critère associé est un écart type sur la position de 128m.
+\begin{figure}
+  \centering
+  \includegraphics[width = 10 cm]{TP3/trajopti.png}
+  \label{optimale}
+  \caption{Trajectoire optimale pour l'observateur}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width = 10 cm]{TP3/crameropti.png}
+  \label{crameropti}
+  \caption{Borne de Cramer Rao pour la trajectoire optimale}
+\end{figure}
+
+\subsection{Conclusion}
+En conclusion, ce TP nous aura permis de voir comment la Borne de Cramer Rao permet de réaliser le choix d'une stratégie pour 
+optimiser la précision sur l'estimation de état d'un système, grâce à la seule connaissance d'un modèle à priori.
 \newpage
 \section{TP4: titre du TP}
 \subsection{Introduction}
