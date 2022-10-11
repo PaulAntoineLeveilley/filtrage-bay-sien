@@ -27,7 +27,7 @@
 
 
 \newpage
-\section{TP1: Calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel.}
+\section{TP1: Calcul d'une intégrale par méthode de Monte-Carlo, importance sampling.}
 \subsection{Introduction}
 Dans ce TP, on se propose de calculer une intégrale par méthode de Monte Carlo. De manière générale, la méthode de Monte Carlo
 consisite à approcher l'intégrale : 
@@ -111,7 +111,7 @@ L'estimation de la partie précédente conduit à une grande variance du résult
 Ce n'est pas satisfaisant et l'on peut faire mieux. En effet, quand nous estimons 
 $\mu$ avec (\ref{estim}), nous donnons autant d'importance a chaque réalisation
 de $X_{i}$ dans l'intégrale. Mais certains termes ont une contribution plus
-imoprtante dans le calcul. Ce sont les termes pour lesquels
+importante dans le calcul. Ce sont les termes pour lesquels
 $g(X_{i})$ est grand. Intuitivement, nous devons donc chercher à estimer "finement" les grandes valeurs de $gq$. Il faut donc 
 tirer selon une densité la plus "proportionelle" possible à $gq$. C'est l'idée de l'échantillonage pondéré (préférentiel).\\
 
@@ -122,7 +122,7 @@ Ou, $\tilde{q}$ est une densite et $(X_{i})_{1\leq i \leq n }$ est distribué se
 
 En effet, dans ce cas, par loi forte des grands nombres, $\tilde{\mu}_{N}$ converge presque surement vers : 
 \[\mathbb{E}^{\mathbb{Q}}[g(X)\frac{q(X)}{\tilde{q}(X)}]=\int_0^1 \frac{g(x)q(x)}{\Tilde{q}(x)} \Tilde{q}(x) dx = \int_0^1 g(x)q(x)dx = \mu \]
- Ou $\mathbb{E}^{\mathbb{Q}}$ désigne l'espérence sous la nouvelle probabilité $\mathbb{Q}$. Pour cette raison, on 
+ Ou $\mathbb{E}^{\mathbb{Q}}$ désigne l'espérance sous la nouvelle probabilité $\mathbb{Q}$. Pour cette raison, on 
  appelle également cette technique "changement" de probabilité.
 
 Maintenant, puisque c'est cela que nous cherchons à optimiser, calculons la variance de ce nouvel estimateur.
@@ -144,7 +144,7 @@ cherche et que l'on suppose difficile à calculer. Dans la pratique, on choisit 
 approximation de $gq/ \int gq$, un développement limité par exemple. Maintenant une autre question se
 pose. Comment tirer une variable aléatoire ayant une loi à densité $\tilde{q}$? 
 
-\subsubsection{Méthode qu rejet}
+\subsubsection{Méthode du rejet}
  On voudrait simuler une variable aléatoire $X$
  selon une densité $f$.
  On suppose qu'il existe une densité $g$ telle que le rapport $\frac{f}{g}$ soit borné, disons, par $C$ et qu'on 
@@ -161,7 +161,7 @@ On appelle probabilité d'acceptation le nombre :
 \[P_{a}(C)=P(U\leq \frac{f(Y)}{Cg(Y)})\]
 \subsubsection{Simulations de $\tilde{\mu}_{N}$}
 
-Pour simuler $\mu$ grâce à $\tilde{\mu}$, on génère par méthode du rejet un échantillon de $N$
+Pour simuler $\mu$ grâce à $\tilde{\mu}_{N}$, on génère par méthode du rejet un échantillon de $N$
 réalisation de $X$ selon la loi à densité $\tilde{q} = \frac{3}{2}(1 - x^2)  $. On a choisi cette
 fonction a partir de $g(x)= \cos (\frac{\pi x}{2})$  en prenant un développement
 limité en zero que l'on a translaté et renormalisé pour obtenir une densité à 
@@ -200,7 +200,7 @@ $\tilde{q}$, il nous faut de l'ordre de 3 opérations.
 \subsection{Conclusion}
 
 
-Pour conclure, nous avons testé deux méthodes pour calcule notre intégrale par méthode de Monte Carlo. Une méthode dite naïve
+Pour conclure, nous avons testé deux méthodes pour calculer notre intégrale par méthode de Monte Carlo. Une méthode dite naïve
 qui donne lieu à une grande variance des résultat puis, une méthode plus rafinée qui fait
 appel à un changement de probabilité. Grâce à cette méthode, nous avons pu réduire la variance d'un facteur presque 100 (83,7 pour être précis.) C'est donc très satisfaisant. Comparons le budget des deux méthodes. Pour rappel, nous avons
 $N=50$. 
@@ -215,9 +215,57 @@ Ceci a des applications dans le calcul d'intégrales sur des espaces de grandes 
 lorsque l'on propage des distributions conditionelles par exemple.
 
 \newpage
-\section{TP2 : Filtre de Kalman: Poursuite d'un mobile en mouvement rectiligne uniforme bruité}
+\section{TP2 : Filtre de Kalman: poursuite d'un mobile}
 \subsection{Introduction}
-Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de retrouver ces valeurs grâce à des observations que nous aurons de sa trajectoire.
+Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de l'estimer à partir d'observations partielles et bruitées.
+
+\subsubsection{Cadre général : filtre de Kalman}
+On se donne un système linéaire du type :
+\begin{equation*}
+   \left\{
+   \begin{array}{c}
+      X_{k}=F_{k}X_{k-1}+f_{k}+W_{k} \\
+      Y_{k}=H_{k}X_{k}+h_{k}+V_{k} \\
+   \end{array}
+   \right.
+\end{equation*}
+Ou les variables aléatoires suivent les hypothèses de la partie 3.1 de \cite{legland2008filtrage}, ce qui assure que 
+le couple $(X_k,Y_k)$ forme un vecteur gaussien.
+$X_k$ représente un système dont la dynamique est stochastique. $Y_k$ est une mesure de l'état du 
+système. Le problème du filtrage consiste à estimer la loi de $X_k$ conditionnellement à l'information
+disponible à l'instant $k$ : $Y_{0:k}$. Pour cela, comme les vecteurs sont gaussiens, il suffit de caractériser l'espérance et la covariance des lois conditionelles : 
+\begin{equation*}
+   \begin{array}{c}
+      \hat{X}_{k}= \mathbb{E}[X_{k}| Y_{0:k}]\\
+      P_k = \mathbb{E}\left[\left(X_k-\hat{X}_k\right)\left(X_k-\hat{X}_k\right)^{T}| Y_{0:k}\right]
+   \end{array}
+\end{equation*}
+Il est pratique de définir également les quantités suivantes : 
+
+\begin{equation*}
+   \begin{array}{c}
+      \hat{X}_{k}^{-}= \mathbb{E}[X_{k}| Y_{0:k-1}]\\
+      P_k^{-} = \mathbb{E}\left[\left(X_k-\hat{X}_k\right)\left(X_k-\hat{X}_k\right)^{T}| Y_{0:k-1}\right]
+   \end{array}
+\end{equation*}
+
+On montre alors que ces quantités obéissent aux relations de récurnce suivantes : 
+
+
+\begin{align*}
+   &\text{\underline{Etape de prédiction : }}\\
+   &\hat{X}_{k}^{-}=F_k\hat{X}_{k-1} =f_{k}\\
+   &P_{k}^{-}=F_{k}P_{k-1}F_{k}^{T}+Q_{k}^{W} \quad Q_{k}^{W}\text{ est la matrice de covariance de } (W_{k})\\
+   &\text{\underline{Etape de correction : }}\\
+   &\hat{X}_{k}= \hat{X}_{k}^{-}+K_{k}\left(Y_{k}-\left(H_{k}\hat{X}_{k}^{-}+h_k\right)\right)\\
+   &P_k = (I-K_{k}H_{k})P_{k}^{-}
+\end{align*}
+Ou $K_k$ est le gain de Kalman. 
+\[K_{k}= P_{k}^{-}H_{k}^{T}\left(H_{k}P_{k}^{-}H_{k}^{T}+Q_{k}^{V}\right)^{-1}\]
+Avec $Q_{k}^{V}$ la matrice de covariance de $(V_k)$.
+
+
+\subsection{Application, estimation d'une trajectoire}
 
 On considère l'état à l'instant t $X_t$ où t varie entre 0 et T, et sa mesure $Y_t$
 \[ X_t = \left (
@@ -450,5 +498,8 @@ optimiser la précision sur l'estimation de état d'un système, grâce à la se
 
 \subsection{Conclusion}
 
+\newpage
+\bibliographystyle{plain}
+\bibliography{bibliography.bib}
 
 \end{document}
