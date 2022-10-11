@@ -27,7 +27,7 @@
 
 
 \newpage
-\section{TP1: calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel.}
+\section{TP1: Calcul d'une intégrale par méthode de Monte-Carlo, échantillonage préférentiel.}
 \subsection{Introduction}
 Dans ce TP, on se propose de calculer une intégrale par méthode de Monte Carlo. De manière générale, la méthode de Monte Carlo
 consisite à approcher l'intégrale : 
@@ -44,15 +44,15 @@ Pour illustrer cette méthode, nous allons estimer l'intégrale
 \[\int_0^1 cos(\frac{\pi x}{2})dx\]
 Dont la valeur se calcule analytiquement, et vaut $\frac{2}{\pi}$ \\
 Dans un premier temps, on mettra en oeuvre la méthode dite "naive" de Monte Carlo. Des considérations de minimisation de
-la variance de l'estimateur nous conduirons à employer une méthode méthode 
-meilleure. Ce sera l'objet de la deuxième partie.\\ 
+la variance de l'estimateur nous conduirons à employer une méthode
+plus précise. Ce sera l'objet de la deuxième partie.\\ 
 
  \subsection{Calcul par méthode de Monte Carlo naive}
-Une première diée est de choisir la loi uniforme sur $[0,1]$, qui admet pour densité $q(x) = \mathbb{1}_{x \in [0,1]}$, ainsi que $g(x) = \cos (\frac{\pi x}{2})$
+Une première idée est de choisir la loi uniforme sur $[0,1]$, qui admet pour densité $q(x) = \mathbb{1}_{x \in [0,1]}$, ainsi que $g(x) = \cos (\frac{\pi x}{2})$
 \subsubsection{Calcul préliminaire : variance de l'estimateur naif.}
 Comme expliqué précédemment, la variance de l'estimation 
-est un indicateur clé pour nous. On cherche a ce qu'elle soit la plus petite possible, 
-pour avoir une précision donnée sur le calcul de l'intégrale, en un nombre
+est un indicateur clé pour nous. On cherche à ce qu'elle soit la plus petite possible, 
+de sorte à avoir une précision donnée sur le calcul de l'intégrale, en un nombre
 minimum d'itérations. Employons nous donc à calculer cette variance pour (\ref{estim}). 
 \begin{align*} 
    Var(\hat{\mu}_N) &= \frac1{N^2} \sum_{i=1}^N Var(g(X_i))\\ 
@@ -82,14 +82,14 @@ présente les résultat.
 
 Nous observons que le résultat est assez proche de la valeur exacte de l'intégrale 
 ($\frac{2}{\pi} \approx 0.6366$). Cela dit, on constate également une forte variance des résultats de l'estimation. Nous avons cherché à 
-estimer cette variance pour un nombre de $1000$ réalisations de l'estimation $\hat{\mu}_{N}$. Nous obtenons une variance empirique de $Var_{emp}(\mu_{N})=0.00184$
-Ceci est conforme à ce qui est attendu. Le calcul de la partie précédente prédit en effet :  $Var(\hat{\mu}_{N})\approx \frac{9,47.10^{-2}}{N} \approx 1,89.10^{-3})$
+estimer cette variance pour un nombre de $1000$ réalisations de l'estimation $\hat{\mu}_{N}$. Nous obtenons une variance empirique de $Var_{emp}(\hat{\mu}_{N})=0.00184$.
+Ceci est conforme à ce qui est attendu. Le calcul de la partie précédente prédit en effet :  $Var(\hat{\mu}_{N}) \approx 1,89.10^{-3})$
 
 
-\subsubsection{Théorème central limite : illustration dans notre cas}
+\subsubsection{Théorème central limite : illustration}
 
 Le théorème centrale limite prédit que l'erreur normalisée doit se comporter commme une loi 
-normal centrée réduite pour $N \rightarrow \infty$. C'est à dire : 
+normale centrée réduite pour $N \rightarrow \infty$. C'est à dire : 
 \[\frac {\hat{\mu}_{N}-\mu }{\sigma /{\sqrt {N}}}\underset{\mathcal{L} }{\longrightarrow}\mathcal{N} (0,1)\]
 
 Pour illustrer ceci, nous estimons la distribution de l'erreur renormalisée
@@ -113,7 +113,7 @@ $\mu$ avec (\ref{estim}), nous donnons autant d'importance a chaque réalisation
 de $X_{i}$ dans l'intégrale. Mais certains termes ont une contribution plus
 imoprtante dans le calcul. Ce sont les termes pour lesquels
 $g(X_{i})$ est grand. Intuitivement, nous devons donc chercher à estimer "finement" les grandes valeurs de $gq$. Il faut donc 
-tirer selon une distribution "proche" de $gq$. C'est l'idée de l'échantillonage pondéré (préférentiel).\\
+tirer selon une densité la plus "proportionelle" possible à $gq$. C'est l'idée de l'échantillonage pondéré (préférentiel).\\
 
 L'échantillonage pondéré consisite à remplacer $\hat{\mu}_{N}$ par : 
 \[\tilde{\mu}_{N}= \frac1{N} \sum_{i=1}^N g(X_i)\frac{q(X_i)}{\Tilde{q}(X_i)}\]
@@ -126,6 +126,7 @@ En effet, dans ce cas, par loi forte des grands nombres, $\tilde{\mu}_{N}$ conve
  appelle également cette technique "changement" de probabilité.
 
 Maintenant, puisque c'est cela que nous cherchons à optimiser, calculons la variance de ce nouvel estimateur.
+
 \begin{align*} 
    Var(\tilde{\mu}_N) &= \frac1{N^2} \sum_{i=1}^N Var \left( g(X_i)\frac{q(X_i)}{\Tilde{q}(X_i)} \right)\\ 
    &= \frac1{N} \left ( \int_0^1 \left (\frac{g(x)q(x)}{\Tilde{q}(x)} \right )^2 \Tilde{q}(x) dx  - \left ( \int_0^1 \frac{g(x)q(x)}{\Tilde{q}(x)} \Tilde{q}(x) dx \right )^2 \right )\\
@@ -134,14 +135,13 @@ Maintenant, puisque c'est cela que nous cherchons à optimiser, calculons la var
    % &= \frac1{N} \left ( \int_0^1 \frac{cos^2(\frac{\pi x}2)}{\frac{\pi^2}{8} (1 -  x^2)} dx   - \mu^2 \right )\\
    % &\approx 1,98.10^{-5}\\
  \end{align*}
-
- On voit donc qu'en faisant le choix $\tilde{q}=gq$, on obtient une variance nulle. C'est surprenant mais en fait c'est attendu,
+ On voit donc qu'en faisant le choix $\Tilde{q}=gq/ \int g(x)q(x)dx$, on obtient une variance nulle. C'est surprenant mais en fait c'est attendu,
  car l'intuition du changement de probabilité est d'échantillonner notre variable aléatoire selon
- une densité proche de $gq$. Le meilleur choix est donc sans surprise $gq$. 
- Seulement, en pratique, on ne peut pas faire ce choix, car pour échantilloner selon $gq$,
+ une densité la plus "proportionelle" à $gq$. Le meilleur choix est donc sans surprise celui la. 
+ Seulement, en pratique, on ne peut pas faire ce choix, car pour échantilloner selon $gq/\int gq$,
 il faut être capable de calculer l'intégrale de $gq$ or c'est exactement ce que l'on 
 cherche et que l'on suppose difficile à calculer. Dans la pratique, on choisit donc une
-approximation de $gq$, un développement limité par exemple. Maintenant une autre question se
+approximation de $gq/ \int gq$, un développement limité par exemple. Maintenant une autre question se
 pose. Comment tirer une variable aléatoire ayant une loi à densité $\tilde{q}$? 
 
 \subsubsection{Méthode qu rejet}
@@ -162,85 +162,60 @@ On appelle probabilité d'acceptation le nombre :
 \subsubsection{Simulations de $\tilde{\mu}_{N}$}
 
 Pour simuler $\mu$ grâce à $\tilde{\mu}$, on génère par méthode du rejet un échantillon de $N$
-réalisation de $X$ selon la loi à densité $\tilde{q} = \frac{\pi^2}{8}(1 - x^2)  $. On a choisi cette
+réalisation de $X$ selon la loi à densité $\tilde{q} = \frac{3}{2}(1 - x^2)  $. On a choisi cette
 fonction a partir de $g(x)= \cos (\frac{\pi x}{2})$  en prenant un développement
 limité en zero que l'on a translaté et renormalisé pour obtenir une densité à 
 support dans $[0,1]$.
 
+Cette fois ci, nous obtenons la valeur $\tilde{\mu}_{N}=0.63582$. Nous constatons une variance moindre. 
 
-
-
-On génère un toujours l'échantillon $(X_i)_{1\leq i \leq N}$ suivant maintenant la loi uniforme de densité q. On génère ensuite Z par la méthode du rejet, et l'on peut ainsi estimer µ comme suit: 
-$$ \hat{\mu}_N = \frac1{N} \sum_{i=1}^N g(X_i)\frac{q(X_i)}{\Tilde{q}(X_i)}\ \overset{p.s.}{\longrightarrow}\ \mu $$
-
-- Chercher une bonne FI (idée: DL au voisinage de 0)  \\
-Pour choisir $\Tilde{q}$, on approxime la fonction g par son développement à l'ordre 2 en 0. Rappelons le développement limité en 0 de la fonction cosinus: 
-$ cos(x) = 1 - \frac{x^2}{2} + o(x^2) $.
-On prend donc pour Fonction d'Importance: 
-$$\Tilde{q}_1(x):= 1 - \frac{\pi^2}{8} x^2 $$
-Il est important de prendre en compte le fait que $\Tilde{q}$ ne doit pas s'annuler si gq ne s'annule pas. Le DL doit donc être corrigé pour que $\Tilde{q}$ ne devienne pas négatif en $x=1$. En $x=1$, la fonction précédente vaut $\delta = 1 - \frac{\pi^2}{8} < 0$, donc on soustrait $\delta$ à $\Tilde{q}_1$ pour obtenir notre nouvelle fonction d'importance :
-$$\Tilde{q}_2(x):= \frac{\pi^2}{8}(1 - x^2) $$
-
-- Calcul de la variance théorique
-
-
-- Calcul de la probabilité d'acceptation théorique:
-$$P_a = \frac1C \int_0^1 g(x)q(x)dx 
-= \int_0^1 cos(\frac{\pi x}{2})dx 
-=\frac{2}{\pi} 
-\approx 0,637$$
-
-\textbf{Application numérique (TP):}\\
-Les Figures~\ref{TP1_IS_DL} et~\ref{TP1_IS_TCL} nous montrent l'étude des deux FI $\Tilde{q}_1$ et $\Tilde{q}_2$ définies précédemment.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.4\textwidth]{TP1/DL_ordre2_g.png}
-\includegraphics[width=0.4\textwidth]{TP1/DL_ordre2_corrige.png}
-\caption{représentation des fonctions gq (en orange) et $\Tilde{q}$ (en bleu): à gauche $\Tilde{q}_1$, à droite $\Tilde{q}_2$}
-\label{TP1_IS_DL}
+\begin{figure}
+   \centering
+   \caption{Représentation graphique de $g$ et de $\tilde{q}$}
+   \includegraphics[width = 10cm]{TP1/gqtilde.png}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.4\textwidth]{TP1/IS_TCL_DL_ordre2.png}
-\includegraphics[width=0.4\textwidth]{TP1/IS_TCL_DL_ordre2_corrige.png}
-\caption{TCL appliqués respectivement à $\Tilde{q}_1$ (à gauche) et $\Tilde{q}_2$ (à droite)}
-\label{TP1_IS_TCL}
+Comme dans la partie précédente, nous estimons empiriquement la variance de $\tilde{\mu}_{N}$. Nous obtenons
+$Var_{emp}(\tilde{\mu}_{N})=1.93.10^{-5}$, pour une valeur théorique de $Var_{\tilde{\mu}_{N}}\approx 1.98.10^{-5}$
+
+Nous avons réalisé le même travail de comparaison de l'erreur renormalisée avec
+la loi normale centrée réduite. Nous présentons cela en figure \ref{TCL_imp}. 
+
+\begin{figure}[h!]
+   \centering
+   \label{TCL_imp}
+   \caption{Comparaison de la densité de la loi $\mathcal{N}(0,1)$ et de l'erreur renormalisée de $\tilde{\mu}_{N}$ }
+   \includegraphics[width = 10 cm]{TP1/TCL_importance_sampling.png}
 \end{figure}
 
-Les résultats du TCL appliqués aux échantillons produits mettent ici en valeur l'importance d'avoir une fonction d'importance du même signe que gq, mais aussi que notre développement limité en 0 corrigé de gq $\Tilde{q}_2$  semble être une bonne approximation pour notre problème. On obtient en effet une variance empirique $Var(\hat{\mu}_N) = 2,11.10^{-5} $ et une probabilité d'acceptation $P_a = 0,669$.
+Nous nous sommes intéressé à la probabilité d'acceptation dans notre méthode du rejet. En effet, la complexité de notre algorithme d'estimation dépend de cette probabilité.
+On peut montrer qu'elle vaut
+$P_{a}=\frac{1}{C}=\frac{1}{\tilde{q}(0)}= \frac{2}{3}$ dans notre cas. Par le calcul, nous obtenons une probabilité d'acceptation empirique de $0,667$, ce qui est attendu. Cela signifie qu'en moyenne, pour simuler 2 échantillons de $X$ selon
+$\tilde{q}$, il nous faut de l'ordre de 3 opérations. 
+
+
 
 
 
 \subsection{Conclusion}
-On cherche maintenant à comparer les deux méthodes précédemment appliquées.
-
-- Comparer le rapport des variances des 2 méthodes (théoriquement et par simulations)\\
-$$\frac{\textrm{variance théorique (Monté Carlo)}}{\textrm{variance théorique Importance Sampling}} = \frac{1,89.10^{-3}}{1,97.10^{-5}} \approx 95,6 $$
-$$\frac{\textrm{variance empirique (Monté Carlo)}}{\textrm{variance empirique (Importance Sampling)}} = \frac{1,84.10^{-3}}{2,11.10^{-5}} \approx 83,7 $$
-On en conclue donc que la méthode d'Importance Sampling est bien meilleure.\\
-
-- Valider par simulations les TCL pour les 2 méthodes en comparant la loi théorique (loi normale) à la loi empirique (histogramme)\\
-Les figures~\ref{TP1_MC_TCL} et~\ref{TP1_IS_TCL} nous prouvent que la distribution de l'erreur faite par nos estimateurs suivent une gaussienne centrée réduite, donc valident nos approximations de µ.\\
-
-- Comparer les budgets pour chaque méthode\\
-\textbf{TO DO}\\
-
-- Calculer la variance de l’estimateur en prenant la FI optimale\\
-Lorsqu'on choisit $\Tilde{q}=gq/ \int g(x)q(x)dx$, on obtient une variance empirique nulle pour la méthode d'Importance Sampling et une estimation de la probabilité d'acceptation d'environ 0,64. La variance théorique vaut quant à elle $P_a(theo)=-2,22.10^{-18}\approx 0$ (erreur d'arrondi de l'ordinateur) et la Probabilité d'acceptation théorique $=0.637$.\\
 
 
+Pour conclure, nous avons testé deux méthodes pour calcule notre intégrale par méthode de Monte Carlo. Une méthode dite naïve
+qui donne lieu à une grande variance des résultat puis, une méthode plus rafinée qui fait
+appel à un changement de probabilité. Grâce à cette méthode, nous avons pu réduire la variance d'un facteur presque 100 (83,7 pour être précis.) C'est donc très satisfaisant. Comparons le budget des deux méthodes. Pour rappel, nous avons
+$N=50$. 
+\begin{itemize}
+   \item Méthode, naïve : pour obtenir une estimation, nous réalisons de l'ordre de N opération puisqu'il s'agit simplement de tirer $N$ réalisations d'une variable aléatoire et d'en faire la moyenne.
+   \item Importance sampling : Cette fois ci, pour obtenir une estimation de $\mu$, nous avons besoin de N réalisations de $X$ selon $\tilde{q}$ mais pour tirer $X$ comme ceci, on fait en moyenne $\frac{3}{2}$ essais (inverse de la probabilité d'acceptation). In fine, on fait de l'ordre de $\frac{3}{2}N$ opérations, ce qui n'est pas beaucoup plus compte tenu du gain en variance. 
+\end{itemize}
 
-
-
-
-
-
-
+On conclut donc que l'échantillonage préférentiel est la méthode de 
+choix lorsue l'on veut estimer une intégrale par méthode de Monte Carlo.
+Ceci a des applications dans le calcul d'intégrales sur des espaces de grandes dimension. Cela sert en le filtrage bayésien, 
+lorsque l'on propage des distributions conditionelles par exemple.
 
 \newpage
-\section{Filtre de Kalman: Poursuite d'un mobile en mouvement rectiligne uniforme bruité}
+\section{TP2 : Filtre de Kalman: Poursuite d'un mobile en mouvement rectiligne uniforme bruité}
 \subsection{Introduction}
 Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de retrouver ces valeurs grâce à des observations que nous aurons de sa trajectoire.
 
@@ -349,7 +324,7 @@ $$ \left\{
 
 \section{TP3 : Borne de Cramer Rao.}
 \subsection{Introduction}
-\subsubsection{Formulation du problème}
+\subsubsection{Borne de Cramer Rao pour un problème de filtrage}
 
 Dans ce TP, on se propose de calculer une borne de Cramer Rao pour un problème de filtrage. Le cadre général est le suivant.
 On se donne un système  $(X_{k})_{k\geq 0}$ sujet à une certaine dynamique,
@@ -368,6 +343,7 @@ Avec $J_{0}=P_{0}^{-1}$ et $\phi(k,k+1)=\frac{\partial X_{k+1}}{\partial X_{k}}$
 La borne de Cramer Rao à l'instant $k$ est alors égale à l'inverse de la matrice d'information : 
 \[BCR_{k}= J_{k}^{-1}\]
 
+\subsubsection{Application : poursuite de bateau}
 Nous étudions le système suivant : un bateau émetteur de bruit se déplace dans le plan de manière rectiligne uniforme. 
 Un bateau observateur mesure la direction d'ou lui parvient le bruit, plus précisément, il mesure l'angle $\theta_{k}$ que fait cette direction avec l'horizontale, ce toute les secondes pendant 100s. Le bateau observateur se déplace également en ligne droite à vitesse constante.
 L'état de l'émeteur est donné par sa position et sa vitesse : $X_{k} = (x_{k},y_{k},\dot{x}_{k},\dot{y}_{k})$, sa matrice de transition est :
