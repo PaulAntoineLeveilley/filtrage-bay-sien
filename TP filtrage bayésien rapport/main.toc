@@ -1,0 +1,28 @@
+\contentsline {section}{\numberline {1}TP1: Calcul d'une intégrale par méthode de Monte-Carlo, importance sampling.}{3}{}%
+\contentsline {subsection}{\numberline {1.1}Introduction}{3}{}%
+\contentsline {subsection}{\numberline {1.2}Calcul par méthode de Monte Carlo naive}{3}{}%
+\contentsline {subsubsection}{\numberline {1.2.1}Calcul préliminaire : variance de l'estimateur naif.}{3}{}%
+\contentsline {subsubsection}{\numberline {1.2.2}Simulations}{4}{}%
+\contentsline {subsubsection}{\numberline {1.2.3}Théorème central limite : illustration}{4}{}%
+\contentsline {subsection}{\numberline {1.3}Echantillonage pondéré et réduction de la variance}{4}{}%
+\contentsline {subsubsection}{\numberline {1.3.1}Méthode du rejet}{5}{}%
+\contentsline {subsubsection}{\numberline {1.3.2}Simulations de $\tilde {\mu }_{N}$}{6}{}%
+\contentsline {subsection}{\numberline {1.4}Conclusion}{7}{}%
+\contentsline {section}{\numberline {2}TP2 : Filtre de Kalman: poursuite d'un mobile}{8}{}%
+\contentsline {subsection}{\numberline {2.1}Introduction}{8}{}%
+\contentsline {subsubsection}{\numberline {2.1.1}Cadre général : filtre de Kalman}{8}{}%
+\contentsline {subsection}{\numberline {2.2}Application, estimation d'une trajectoire}{8}{}%
+\contentsline {subsection}{\numberline {2.3}Simulations de la trajectoire et estimation par le filtre de Kalman}{9}{}%
+\contentsline {subsection}{\numberline {2.4}Conclusion}{10}{}%
+\contentsline {section}{\numberline {3}TP3 : Borne de Cramer Rao.}{11}{}%
+\contentsline {subsection}{\numberline {3.1}Introduction}{11}{}%
+\contentsline {subsubsection}{\numberline {3.1.1}Borne de Cramer Rao pour un problème de filtrage}{11}{}%
+\contentsline {subsubsection}{\numberline {3.1.2}Application : poursuite de bateau}{11}{}%
+\contentsline {subsubsection}{\numberline {3.1.3}Calcul du gradient de $h_{k}$ par rapport à $X_{k}$}{12}{}%
+\contentsline {subsection}{\numberline {3.2}Simulations des dynamiques de l'observateur et de l'émetteur}{12}{}%
+\contentsline {subsection}{\numberline {3.3}Optimisation de la valeur de $\varphi $}{12}{}%
+\contentsline {subsection}{\numberline {3.4}Conclusion}{13}{}%
+\contentsline {section}{\numberline {4}TP4: titre du TP}{14}{}%
+\contentsline {subsection}{\numberline {4.1}Introduction}{14}{}%
+\contentsline {subsection}{\numberline {4.2}Titre intermédiaire}{14}{}%
+\contentsline {subsection}{\numberline {4.3}Conclusion}{14}{}%

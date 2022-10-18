@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{amsfonts}
 \usepackage{bbold}
+\usepackage{subcaption}
 
 \title{SOD333 - Rapport}
 \author{Paul-Antoine Leveilley \& Mila Rocco}
@@ -266,43 +267,34 @@ Avec $Q_{k}^{V}$ la matrice de covariance de $(V_k)$.
 
 
 \subsection{Application, estimation d'une trajectoire}
-
-On considère l'état à l'instant t $X_t$ où t varie entre 0 et T, et sa mesure $Y_t$
+Dans cette partie, on se donne le système suivant : un mobile de masse $m$ se déplace dans le plan. Il est décrit par son vecteur d'état, 
 \[ X_t = \left (
    \begin{array}{c}
       x_t \\
       y_t \\
       \Dot{x_t} \\
       \Dot{y_t} \\
-   \end{array} \right )
-   ,\ Y_t = \left (
-   \begin{array}{c}
-      x_t \\
-      y_t \\
-   \end{array} \right )
-   ,\ W_t = \left (
-   \begin{array}{c}
-      w_t^1 \\
-      w_t^2 \\
-   \end{array} \right )
-\]
+   \end{array} \right )\quad \forall t \in 0,...,T\]
+Le mobile est soumis à une force aléatoire $(W_{t})_{t\in 0,...,T}$. Les équations de Newton nous donnent sa dynamique : 
 
-équation de la dynamique : 
+
+
+
 \[ m \left (
    \begin{array}{c}
       \ddot{x_t} \\
       \ddot{y_t} \\
    \end{array} \right )
-   = \left (
+   =cW_t =c\left (
    \begin{array}{c}
       w_k^1 \\
       w_k^2 \\
    \end{array} \right )\ 
    \forall t \in [t_k, t_{k+1}]
-\]
+\] Ou $c>0$ et $W_t$ est un bruit blanc gaussien centré réduit.
 
-On fixe $m=1$ et on obtient l'équation d'état suivante :
-\[ X_n = \left ( 
+Après intégration en temps, la dynamique de $X_t$ s'écrit sous la forme matricielle suivante :
+\[ X_t = \left ( 
    \begin{array}{cccc} %Fn
       1 & 0 & \delta t & 0 \\
       0 & 1 & 0 & \delta t \\
@@ -311,10 +303,10 @@ On fixe $m=1$ et on obtient l'équation d'état suivante :
    \end{array} \right )
    \left ( 
    \begin{array}{cccc} %Xn-1
-      x_{t_{n-1}} \\
-      y_{t_{n-1}} \\
-      \Dot{x}_{t_{n-1}} \\
-      \Dot{y}_{t_{n-1}} \\
+      x_{t-1} \\
+      y_{t-1} \\
+      \Dot{x}_{t-1} \\
+      \Dot{y}_{t-1} \\
    \end{array} \right )
    + \left (
    \begin{array}{cc}
@@ -325,13 +317,13 @@ On fixe $m=1$ et on obtient l'équation d'état suivante :
    \end{array} \right )
    \left (
    \begin{array}{c}
-      w_n^1 \\
-      w_n^2 \\
+      w_t^1 \\
+      w_t^2 \\
    \end{array} \right )
-   = F X_{n-1} + G W_n
+   = F X_{t-1} + G W_t
 \]
 
-Condition initiale: 
+Avec condition initiale: 
 \[ m_0 = \mathbb{E}[X_0] = \left (
    \begin{array}{c}
       5000\ m \\
@@ -348,7 +340,7 @@ Condition initiale:
    \end{array} \right )
 \]
 
-Constantes du problème:
+Pour ce TP, nous prendrons les valeurs suivantes :
 $$ \left\{
    \begin{array}{l}
       \delta t = 1\ seconde\\
@@ -356,18 +348,81 @@ $$ \left\{
       c = 2\ m/s^2 \\
    \end{array} \right .$$
 
-\begin{figure}[ht]
+
+
+A chaque instant, on réalise une mesure partielle de l'état $X_t$, on ne mesure 
+que la position. De plus, on suppose notre appareil de mesure bruité : 
+\[ Y_t = \left ( 
+   \begin{array}{cccc} %Fn
+      1 & 0 & 0 & 0 \\
+      0 & 1 & 0 & 0\\
+   \end{array} \right )
+   \left ( 
+   \begin{array}{cccc} %Xn-1
+      x_{t} \\
+      y_{t} \\
+      \Dot{x}_{t} \\
+      \Dot{y}_{t} \\
+   \end{array} \right )+
+  \left (
+   \begin{array}{c}
+      v_t^{1} \\
+      v_t^2 \\
+      
+   \end{array} \right )
+\]
+
+Ou $V_t = \left(v_t^{1},v_t^2\right)$ est un bruit blanc gaussien de matrice de covariance : 
+\[Q_{k}^{V}= \left (
+   \begin{array}{cccc}
+      (50\ m)^2 & 0 \\
+      0 & (50\ m)^2 \\
+   \end{array} \right )
+\]
+
+\subsection{Simulations de la trajectoire et estimation par le filtre de Kalman}
+Dans cette partie, nous simulons une trajectoire du mobile ainsi qu'une mesure bruitée de son état à chaque étape. Nous présentons cela 
+en figure \ref{TP2_pos_vit}. 
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.4\textwidth]{TP2/position_réelle.png}
 \includegraphics[width=0.4\textwidth]{TP2/vitesse_reelle.png}
-\caption{Trajectoire et vitesse associée, que l'on cherche à retrouver}
+\caption{Simulation d'une trajectoire du mobile. Position à gauche et vitesse à droite.}
 \label{TP2_pos_vit}
 \end{figure}
 
-\subsection{Titre intermédiaire}
+Ce qui est intressant avec le filtre de Kalman est que l'on connait la covariance de la distribution
+conditionelle a chaque étape. On peut donc tracer des 
+intervalles de confiance à 95\%. C'est ce que nous présentons en figure \ref{ellipse}.
+
+\begin{figure}[!htb]
+   \centering
+   \caption{Trajectoire estimée par le filtre de Kalman et intervalles de confiance à 95\% associées.}
+   \label{ellipse}
+   \includegraphics[width = 18cm]{TP2/filtre_kalman.png}
+\end{figure}
+
+D'ailleurs, puisque la méthode du filtre de Kalman fournit des matrices de covariance, on 
+peut tracer des ellipses de confiance à 95\% autour de l'estimation de la trajectoire
+de $X$ c'est ce que nous présentons en figure \ref{ellipse_conf}. 
+
+\begin{figure}[!htb]
+   \centering
+   \caption{Trajectoire estimée par le filtre de Kalman et ellipses de confiance à 95\% associées.}
+   \label{ellipse_conf}
+   \includegraphics[width = 10cm]{TP2/ellipses_conf.png}
+\end{figure}
+
+On constate qu'au départ, il existe une grande incertitude sur la position du mobile.
+Cette incertitude décroit pendant les premières itérations, jusqu'à ce qu'elle se stabilise autour d'une certaine valeur.
+Il est intéressant de noter que les ellipses de confiance à 95\% autour de 
+l'estimation de la trajectoire contiennent bien les points de la trajectoire réelle,
+comme attendu.
 \subsection{Conclusion}
 
 
+
+\newpage
 \newpage
 
 \section{TP3 : Borne de Cramer Rao.}
@@ -412,7 +467,7 @@ Pour répondre à cette question, nous allons simuler la dynamique de l'éméteu
 calculer le gradient de la fonction d'observation et nous allons en déduire la matrice d'information.
 Dans notre cas, la fonction d'observation est l'angle que fait la direction d'observation avec l'horizontale. 
 En terme de l'abscisse et de l'ordonnée de l'éméteur et de l'observateur, cette fonction s'écrit : 
-\[\theta_{k} = h_{k}(X_{k})=\arctan \left(\frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}\right)\]
+\[h_{k}(X_{k})=\arctan \left(\frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}\right)\]
 
 En inversant la matrice d'observation, on obtiendra la borne de Cramer Rao, sous forme d'une matrice carrée d'ordre 4.
 On cherchera ensuite la valeur de $\varphi$ qui minimise le critère : $\sqrt{\sigma_{x_{n}}^{2}+\sigma_{y_{n}}^{2}}$
