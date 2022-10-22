@@ -9,9 +9,21 @@ with open('TP2/kalman.npy','rb') as f:
 with open('TP2/cov.npy','rb') as f:
     cov = np.load(f)
 
-dt = 0.01
+def plot_cov(cova, mean=[0, 0], cst=6, num=200):
+    """Display the ellipse associated to the covariance matrix cov.
+    If mean is specified, the ellipse is translated accordingly.
+    """
+    cova = np.linalg.inv(np.asarray(cova))
+    mean = np.asarray(mean)
+    theta = np.linspace(0, 2*np.pi, num=num)
+    X = np.c_[np.cos(theta), np.sin(theta)]
+    X = X.T * np.sqrt(cst / np.diag(X.dot(cova.dot(X.T))))
+    X = X.T + mean
+    return(X)
 
-fig = plt.figure(figsize=(6, 3))
+
+
+fig = plt.figure(figsize=(15, 8))
 ax1 = plt.subplot2grid(shape=(2, 2), loc=(0, 0), rowspan=2)
 ax2 = plt.subplot2grid(shape=(2,2), loc=(0, 1), colspan=1)
 ax3 = plt.subplot2grid(shape=(2,2), loc=(1, 1), colspan=1)
@@ -29,8 +41,10 @@ line6, = ax3.plot([], [])
 line7, = ax2.plot([], [])
 line8, = ax3.plot([], [])
 
+line_ellipse, = ax1.plot([],[],'r')
+
 ax1.set_title("Trajectoire du mobile et estimation")
-ax1.legend(["trajectoire réelle","estimation par filtre de Kalman"])
+ax1.legend(["trajectoire réelle","estimation par filtre de Kalman","Ellipse de confiance à 95 %"])
 ax1.set_xlim(np.min(dynamique[:,0]-100), np.max(dynamique[:,0])+100)
 ax1.set_ylim(np.min(dynamique[:,1])-100, np.max(dynamique[:,1])+100)
 
@@ -64,9 +78,12 @@ def animate(i):
     
     line7.set_data(T[:t],kalman[:t,0])
     line8.set_data(T[:t],kalman[:t,1])
+    X = plot_cov(cova = cov[i],mean=kalman[i,:2],cst=6) 
+    line_ellipse.set_data(X[:, 0], X[:, 1])
 
-    return line, line2, line3,line4,line5, line6,line7,line8
+    return line, line2, line3,line4,line5, line6,line7,line8,line_ellipse
  
 ani = animation.FuncAnimation(fig, animate, frames=n,
-                              interval=1, blit=True, repeat=False)
+                              interval=5, blit=True, repeat=False)
+ani.save('kalman3.gif',writer= 'imagemagik',fps = 10)
 plt.show()
