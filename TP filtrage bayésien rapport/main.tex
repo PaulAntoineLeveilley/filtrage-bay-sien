@@ -215,7 +215,8 @@ choix lorsue l'on veut estimer une intégrale par méthode de Monte Carlo.
 Ceci a des applications dans le calcul d'intégrales sur des espaces de grandes dimension. Cela sert en le filtrage bayésien, 
 lorsque l'on propage des distributions conditionelles par exemple.
 
-\newpage
+\clearpage
+
 \section{TP2 : Filtre de Kalman: poursuite d'un mobile}
 \subsection{Introduction}
 Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de l'estimer à partir d'observations partielles et bruitées.
@@ -397,7 +398,7 @@ intervalles de confiance à 95\%. C'est ce que nous présentons en figure \ref{e
 
 \begin{figure}[!htb]
    \centering
-   \caption{Trajectoire estimée par le filtre de Kalman et intervalles de confiance à 95\% associées.}
+   \caption{Trajectoire estimée par le filtre de Kalman et intervalles de confiance à 95\% associés.}
    \label{ellipse}
    \includegraphics[width = 18cm]{TP2/filtre_kalman.png}
 \end{figure}
@@ -422,8 +423,8 @@ comme attendu.
 
 
 
-\newpage
-\newpage
+\clearpage
+
 
 \section{TP3 : Borne de Cramer Rao.}
 \subsection{Introduction}
@@ -525,31 +526,246 @@ Nous présentons ces résultat en figure \ref{cramerrao}.
 \subsection{Optimisation de la valeur de $\varphi$}
 Pour trouver la valeur de $\varphi$ optimale, nous avons simplement testé toutes les valeurs entre $0^{\circ}$ et $360^{\circ}$, avec un pas de 
 $1^{\circ}$. Nous avons trouvé une valeur optimale de $\varphi = 109^{\circ}$, ce qui correspond à la trajectoire représentée en figure
-\ref{optimale}. La borne de Cramer Rao associée est représentée en figure \ref{crameropti}. Le critère associé est un écart type sur la position de 128m.
-\begin{figure}
-  \centering
-  \includegraphics[width = 10 cm]{TP3/trajopti.png}
-  \label{optimale}
-  \caption{Trajectoire optimale pour l'observateur}
-\end{figure}
+\ref{opti_}. La borne de Cramer Rao associée est représentée en figure \ref{crameropti}. Le critère associé est un écart type sur la position de 128m.
 
-\begin{figure}
-  \centering
-  \includegraphics[width = 10 cm]{TP3/crameropti.png}
-  \label{crameropti}
-  \caption{Borne de Cramer Rao pour la trajectoire optimale}
+\begin{figure}[h!]
+   \centering
+   \begin{minipage}[t]{8cm}
+       \centering
+       \includegraphics[width=7cm]{TP3/trajopti.png}
+       \caption{Trajectoire optimale pour l'observateur}
+       \label{opti_}
+   \end{minipage}
+   \begin{minipage}[t]{8cm}
+       \centering
+       \includegraphics[width=7cm]{TP3/crameropti.png}
+       \caption{Borne de Cramer Rao pour la trajectoire optimale}
+       \label{crameropti}
+   \end{minipage}
 \end{figure}
 
 \subsection{Conclusion}
 En conclusion, ce TP nous aura permis de voir comment la Borne de Cramer Rao permet de réaliser le choix d'une stratégie pour 
 optimiser la précision sur l'estimation de état d'un système, grâce à la seule connaissance d'un modèle à priori.
 
-\newpage
+\clearpage
 
-\section{TP4: titre du TP}
+
+\section{TP4: Navigation par corrélation de terrain - filtre particulaire}
 \subsection{Introduction}
+Ce TP est l'aboutissement du tout ce qui précède. Dans ce TP, nous allons 
+implémenter le filtre particulaire pour un problème de filtrage non linéaire : la navigation par corrélation de terrain. 
+La première partie présente ce qu'est le filtre particulaire. La deuxième partie discute de 
+notre problème spécifique et de l'implémentation du filtre particulaire dans ce cas. 
+\subsection{Filtre optimal et filtre particulaire}
+\subsubsection{Filtre optimal}
+Rappelons les équations du filtrage :
 
-\subsection{Titre intermédiaire}
+On considère une chaîne de Markov $(X_{n})_{n \geq 0}$ à valeurs dans $\mathbb{R}^d$, de loi initiale $\pi_0$, i.e. $\pi_0(dx_{1:d})=P(X_0 \in dx_{1:d})$, et de noyau de transition 
+$Q_{n}(x_{n-1},dx_{1:d})= P(X_n \in dx_{1:d} \vert X_{n-1}=x_{n-1} )$. 
+On considère les observations bruitées $Y_n = h(X_n)+ V_n \in \mathbb{R}^q$. On suppose que les 
+$V_n$ sont iid et a densité $g$ par rapport à la mesure de Lebesgue. On suppose de plus que $V_n \perp X_0$. On introduit la fonction de vraissemblance  
+$\psi_n(x)=g((Y_n-h(x)))$ c'est donc une fonction aléatoire qui n'est connue que lorsque l'on a la n ème réalisation de $Y$. La fonction de vraissemblance mesure la cohérence entre le point de l'espace d'état $x$
+et l'observation courante. \\
+On appelle filtre optimal la suite de mesures de probabilité suivante : $(\Pi_n)_{n \geq 0}$ ou $\Pi_0 = \pi_0$ et $\Pi_n(dx_{1:d})= P(X_n \in dx_{1:d} \vert Y_{0:n})$. Il est également utile d'introduire la suite 
+$\Pi_{n \vert n-1} = P(X_n \in dx_{1:d} \vert Y_{0:n-1})$. 
+On montre que : 
+
+\begin{align*}
+   \Pi_n(dx_{1:d}) &=P(X_n \in dx_{1:d} \vert Y_{0:n})\\
+                  &=\frac{P(X_n \in dx_{1:d}, Y_n \in dy_{1:q} \vert Y_{0:n-1})}
+                  {P(Y_n \in dy_{1:q} \vert Y_{0:n-1})}\\
+                  &= \frac{P(Y_n \in dy_{1:q} \vert X_n = x_n)P(X_n \in dx_{1:d} \vert Y_{0:n-1})}
+                  {P(Y_n \in dy_{1:q} \vert Y_{0:n-1})}\\
+                  &= \frac{P(Y_n \in dy_{1:q} \vert X_n = x_n)P(X_n \in dx_{1:d} \vert Y_{0:n-1})}
+                  {\displaystyle{\int_{x_n \in \mathbb{R}^d} P(Y_n \in dy_{1:q} \vert X_n = x_n)P(X_n \in dx_{1:d} \vert Y_{0:n-1}) \, }}\\
+\end{align*}
+On peut voir que : 
+\begin{align*}
+   P(Y_n \in dy_{1:q} \vert X_n =x_n)&=P(V_n \in dy_{1:q}-h(x_n) \vert X_n = x_n)\\
+   &=g(Y_n-h(x_n))dy_{1:q}\\
+\end{align*}
+de sorte que : 
+\[\Pi_n(dx_{1:d}) = \frac{\psi_n(x_n)\Pi_{n \vert n-1}(dx_{1:d})}{\displaystyle{\int_{x_n \in \mathbb{R}^d} \psi_n(x_n)\,\Pi_{n \vert n-1}(dx_{1:d})}}\]
+Cette opération s'appelle le produit projectif de $\Pi_{n \vert n-1}$ par $\psi$, et se note : $\Pi_{n} = \psi_n \boldsymbol{\cdot} \Pi_{n \vert n-1}$
+\newline
+Il reste donc à voir comment passer de $\Pi_{n-1}$ à $\Pi_{n \vert n-1}$.
+\begin{align*}
+   \Pi_{n \vert n-1}((dx_{1:d})_n) &= P(X_n \in (dx_{1:d})_{n}\vert Y_{0:n-1})\\
+   &=\displaystyle{\int_{x_{n-1}\in \mathbb{R}^d} \,P(X_n \in (dx_{1:d})_n,X_{n-1} \in (dx_{1:d})_{n-1} \vert Y_{0:n-1})}\\
+   & = \displaystyle{\int_{x_{n-1}\in \mathbb{R}^d} \,
+    P(X_n \in (dx_{1:d})_n \vert X_{n-1}, Y_{0:n-1}) 
+    \Pi_{n}((dx_{1:d})_{n-1})}\\
+\end{align*}
+Mais $X_n$ est une chaîne de Markov donc, en particulier, sa loi ne dépend pas des observations passées $Y_{0:n-1}$. on a alors : 
+\begin{align*}
+   \Pi_{n \vert n-1}((dx_{1:d})_n) & =  \displaystyle{\int_{x_{n-1}\in \mathbb{R}^d} \,
+   P(X_n \in (dx_{1:d})_n \vert X_{n-1}) 
+   \Pi_{n}((dx_{1:d})_{n-1})}\\
+   &=\displaystyle{\int_{x_{n-1}\in \mathbb{R}^d}\Pi_{n-1}((x_{1:d})_{n-1})\,Q_n(x_{n-1},(dx_{1:d})_n)}\\
+   &=(\Pi_{n-1}Q_n)((dx_{1:d})_n)
+\end{align*}
+On appelle cette opération le "transport" de la mesure $\Pi_{n-1}$ par le noyau $Q_n$.
+\\
+On peut résumer le filtre optimal par le schéma suivant : 
+
+\[\Pi_{n-1} \xrightarrow[prediction]{} \Pi_{n \vert n-1} = (\Pi_{n-1}Q_{n})\xrightarrow[correction]{}  \Pi_{n}=\psi_n \boldsymbol{\cdot}\Pi_{n \vert n-1}\]
+\subsubsection{Filtre particulaire}
+
+En pratique, le filtre optimal est très compliqué à calculer car les étapes de prédiction et de correction font intervenir des intégrales dans des espaces à (possiblement) grande dimension. On préfère alors utiliser le filtre particulaire.
+L'idée du filtre particulaire est d'approcher le filtre optimal par des méthodes de Monte Carlo.
+Le filtre particulaire repose sur l'idée de mesure empirique. On appelle mesure empirique associée à un échantillon $(X_0, ... , X_n)$ iid suivant la loi 
+$\Pi$ la mesure $S^N(\Pi)= \frac{1}{N}\sum_{i=1}^{N} \delta_{X_i}$ ou $\delta_x$ désigne la mesure de Dirac en $x$. 
+Il faut bien voir qu'étant donné une mesure $\Pi$, $S^{N}(\Pi)$ est une mesure aléatoire. Elle dépend de l'échantillon $(X_0, ... , X_n)$.
+Le filtre particulaire consiste alors en les opérations suivantes : 
+\[\Pi_{n-1}^N \xrightarrow[prediction ~ echantillonee]{} \Pi_{n \vert n-1}^N = S^N(\Pi_{n-1}^NQ_{n})\xrightarrow[correction]{}  \Pi_{n}^N=\psi_n \boldsymbol{\cdot}\Pi_{n \vert n-1}^N\]
+Regardons en détail les étapes de prédiction et de correction pour comprendre l'intérêt du filtre particulaire.
+\paragraph{correction}
+A cette étape, on dispose de $\Pi^{N}_{n \vert n-1} = \frac{1}{N}\sum_{i=1}^{N} \delta_{X_{n \vert n-1}^{i,N}}$,
+ou $(X_{n \vert n-1}^{1,N},...,X_{n \vert n-1}^{N,N} )$ est un échantillon iid distribué selon 
+$\Pi_{n \vert n-1}^{N}Q_{n}$. 
+On peut alors calculer $\Pi_{n}^{N}$ : 
+\begin{align*}
+   \Pi_{n}^{N}(dx_{1:d}) &= \psi_n \boldsymbol{\cdot} \Pi_{n \vert n-1}^N\\
+   &=\frac{\psi_n(x)\Pi_{n \vert n-1}^N(dx_{1:d})}{\displaystyle{\int_{x \in \mathbb{R}^d} \psi_n(x)\,\Pi_{n \vert n-1}^N(dx_{1:d})}}\\
+   &=\frac{\displaystyle{\sum_{i=1}^{N}\psi_n(X_{n \vert n-1}^{i,N})\delta_{X_{n \vert n-1}^{i,N}}}}{\frac{1}{N}\displaystyle{\sum_{j=1}^{N} \psi_{n}(X_{n \vert n-1}^{j,N})}}\\
+\end{align*}
+On pose alors : 
+\[\omega_{n}^i= \frac{\psi_n(X_{n \vert n-1}^{i,N})}{\frac{1}{N}\displaystyle{\sum_{j=1}^{N} \psi_{n}(X_{n \vert n-1}^{j,N})}}\]
+De sorte que :
+\[\Pi_{n}^{N}= \sum_{i=1}^{N}\omega_{n}^{i}\delta_{X_{n \vert n-1}^{i,N}}\]
+On voit donc que l'étape de correction devient une étape de pondération de chaque particule par un poids proportionnel à sa vraissemblance.
+\paragraph{prédiction échantillonée}
+A l'étape $n$, on a $\Pi_{n}^N= \sum_{i=1}^{N}\omega_n^i\delta_{X_{n \vert n-1}^{i,N}}$
+On peut alors calculer le transport de la mesure $\Pi_n^N$ par le noyau $Q_{n+1}$ : 
+\begin{align*}
+   (\Pi_n^N Q_{n+1})(dx_{1:d}) &=\displaystyle{\int_{y_{1:d}\in \mathbb{R}^d}\,\Pi_n^N(dy_{0:d})Q_{n+1}(y_{1:d},dx_{1:d})}\\
+   &=\displaystyle{\int_{y_{1:d}\in \mathbb{R}^d}\,\sum_{i=1}^N \omega_n^i \delta_{X_{n \vert n-1}^{i,N}}Q_{n+1}(y_{1:d},dx_{1:d})}\\
+   &=\sum_{i=1}^N \omega_n^i Q_{n+1}(X_{n \vert n-1}^{i,N},dx_{1:d})
+\end{align*}
+Ecris sous cette forme, on constate que $(\Pi_n^N Q_{n+1})$ est un mélange de probabilités. Or il est facile de générer
+un échantillon selon un mélange de probabilités. On peut faire comme ceci : 
+\begin{itemize}
+   \item Générer $I$ selon $P(I=i)=\omega^i_n$
+   \item Générer $X$ selon $Q_{n+1}(X_{n\vert n-1}^{I,N},\cdot)$
+\end{itemize}
+Cela revient à séléctionner les particules selon leur poids (plus le poids d'une 
+particule est grand, plus on a de chance de la tirer), puis à faire evoluer la particule 
+selon la dynamique de la chaîne de Markov.
+\subsubsection{Dynamique déterministe}
+Le cas d'une dynamique déterministe $X_{n+1}=f(X_n)$ est un peu embêtant. En effet, l'étape de prédiction
+échantillonnée fait une séléction des particules. Si aucun bruit n'est ajouté par l'évolution, la séléction va finir par "tuer" la diversité des particules. 
+Dans ce cas (et c'est le cas qui se présente pour nous dans le TP), il est nécéssaire de régulariser la mesure $\Pi_n^N$ (à l'étape de prédiction).
+Concrètement, on remplace $\Pi_n^N$ par :
+\[\tilde{\Pi}_n^N=\sum_{i=1}^N \omega_n^i K\left(\frac{\boldsymbol{\cdot}-X_{n \vert n-1}^{i,N}}{h}\right) \]  
+Ou $K$ est un noyau (Gaussien, Epanechikov,...) et $h$ est un paramètre qui contrôle la "finesse" de la régularisation. Il existe un choix de $h$ qui minimise l'erreur quadratique moyenne entre la mesure discrète et la mesure régularisée, notons le $h_{opt}$.
+\newline
+L'étape de prédiction échantillonnée devient alors : 
+\begin{itemize}
+   \item Générer $I$ selon $P(I=i)=\omega^i_n$
+   \item Générer $\epsilon$ selon $K$.
+   \item Poser $\tilde{X}^{i,N}_{n \vert n-1}=X^{I,N}_{n \vert n-1} + h_{opt}\Gamma_k \epsilon$. Avec, $\Gamma_k^{T}\Gamma_k=Cov\left((X_{n \vert n-1}^{i,N})_{i\in \left\{1,...,N\right\}}\right) $
+   \item Faire évoluer la particule : $ X_{n}^{i,N}= f(\tilde{X}^{i,N}_{n \vert n-1})$
+\end{itemize}
+
+\subsection{Navigation par corrélation de Terrain}
+Le problème de la navigation par corrélation de terrain est le suivant : 
+un avion se déplace en ligne droite à vitesse constante (horizontale). Disons qu'à un moment,
+il perd son signal GPS et se retrouve "perdu", c'est à dire qu'il y a une incertitude sur son état (position/vitesse). Dans ce cas, il 
+existe un moyen pour l'avion de retrouver sa position avec une précision acceptable. En effet, les avions embarquent dans leur ordinateurs de bord
+des modèles numériques de terrain, c'est a dire une carte de l'altitude du sol en fonction de la position. En effectuant des mesures d'altitude et en "corrélant" ces 
+mesures au modèle de terrain, l'avion peut se retrouver. Naturellement, ces mesures sont bruitées. On retrouve en fait un problème de filtrage avec les paramètres suivants :
+\begin{equation*}
+   X_k = (x_k,y_k,z_k,\Dot{x}_k,\Dot{y}_k,\Dot{z}_k)^T\\
+\end{equation*}
+\begin{equation*}
+   \left\{\begin{array}{c}
+      X_k = \Phi X_{k-1} \\
+      Y_k=h(X_k)+\epsilon_k = Z_k -h_{MNT}(x_k,y_k)+\epsilon_k \\
+   \end{array}\right.
+\end{equation*}
+\begin{figure}[h!]
+   \centering
+   \label{MNT}
+   \caption{Navigation par corrélation de terrain, illustration}
+   \includegraphics[width = 8 cm]{TP4/MNT.png}
+\end{figure}
+Avec,
+\[\Phi = \begin{pmatrix}
+            1&0&0&dt&0&0\\
+            0&1&0&0&dt&0\\
+            0&0&1&0&0&dt\\
+            0&0&0&1&0&0\\
+            0&0&0&0&1&0\\
+            0&0&0&0&0&1\\
+         \end{pmatrix}
+\]
+Dans le TP, $h_{MNT}$ est un tableau de nombres donné.
+
+Comme discuté précédemment, la dynamique de ce problème est déterministe (l'avion se déplace en ligne droite, a vitesse constante). 
+Il faut dont mettre en oeuvre la technique de régularisation. Nous avons choisi d'utiliser un noyau Gaussien.
+Simplement, cette étape est assez coûteuse. Pour s'épargner du temps de calcul, on 
+ne la pratique que lorsque l'on détecte que la diversité de l'échantillon de particules est 
+trop faible. Quand la condition $N_eff = \frac{1}{\sum_{i=1}^{N}\omega_i^2} \leq N_{th}=Coeff \times N$, on procède au rééchantillonage.
+En pratique, un bon choix est $Coeff = 0.4$.
+
+Les paramètres du problème sont résumés dans le tableau \ref{paramètres2} : 
+
+
+\begin{figure}[h!]
+   \centering
+   \caption{Paramètres pour la simulation}
+   \label{paramètres2}
+   \begin{tabular}{|*{11}{c|}}
+     \hline Horizon temporel & $T = 720 s$ \\
+     \hline Vitesse avion & $v=300 km.h^{-1}$\\
+     \hline Cap de l'avion & $\theta = 45^\circ$\\
+     \hline Etat initial & $X_0 =\left(150,150,8,v \cos(\theta),v \sin(\theta),0\right) km $\\ 
+      \hline dt  & $dt = 1 s$ \\
+      \hline Ecart type bruit mesure & $\sigma_{mes}=30 m$\\
+      \hline Incertitude initiale position(forme $P_0$)& $(\sigma_x,\sigma_y,\sigma_z)=(3000,3000,500) m$\\
+      \hline Incertitude initiale vitesse (forme $P_0$)&$(\sigma_{v_{x}},\sigma_{v_{y}},\sigma_{v_{z}})=(5,5,5) m.s^{-1}$\\
+      \hline Nombre de particules & $N=5000$ \\
+      \hline
+   \end{tabular}
+ \end{figure}
+ 
+ Pour initialiser l'algorithme, on tire une position initiale "fausse", uniformément autour de $X_0$, dans les intervalles
+ $X_0 \pm \sigma_{x,y,z}$, puis on tire les particules initiales autour de cette fausse position, selon une distribution gaussienne de matrice de covariance $P_0$.
+
+ La figure \ref{traj} présente la trajectoire de l'avion. La figure \ref{mesure_alt} montre les mesures
+ que fait l'avion le long d'une trajectoire (avec et sans le bruit). La figure \ref{particu} montre 
+ le tirage initial des particules.
+
+ \begin{figure}[h!]
+   \centering
+   \caption{Trajectoire de l'avion}
+   \label{traj}
+   \includegraphics[width= 10 cm]{TP4/Traj.png}
+ \end{figure}
+
+ \begin{figure}[h!]
+   \centering
+   \caption{Trajectoire de l'avion}
+   \label{mesure_alt}
+   \includegraphics[width= 14 cm]{TP4/mesure.png}
+ \end{figure}
+
+ \begin{figure}[h!]
+   \centering
+   \caption{Tirage initial des particules}
+   \label{particu}
+   \includegraphics[width= 10 cm]{TP4/tirage_init.png}
+ \end{figure}
+
+ \paragraph{Résultats}
+ Apres quelques efforts, nous avons été capables de faire fonctionner le 
+ filtre particulaire. La figure \ref{filtre_part} présente l'évolution des
+ particules. On constate bien que le groupe de particules se concentre autour de la 
+ vraie position de l'avion. De plus, on observe clairement les étapes de redistribution,
+ et l'on comprend bien comme elles agissent pour explorer l'espace des états à partir
+ des positions pertinentes connues.
+  
 
 \subsection{Conclusion}
 
