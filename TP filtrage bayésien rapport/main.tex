@@ -623,7 +623,7 @@ Regardons en détail les étapes de prédiction et de correction pour comprendre
 \paragraph{correction}
 A cette étape, on dispose de $\Pi^{N}_{n \vert n-1} = \frac{1}{N}\sum_{i=1}^{N} \delta_{X_{n \vert n-1}^{i,N}}$,
 ou $(X_{n \vert n-1}^{1,N},...,X_{n \vert n-1}^{N,N} )$ est un échantillon iid distribué selon 
-$\Pi_{n \vert n-1}^{N}Q_{n}$. 
+$\Pi_{n}^{N}Q_{n}$. 
 On peut alors calculer $\Pi_{n}^{N}$ : 
 \begin{align*}
    \Pi_{n}^{N}(dx_{1:d}) &= \psi_n \boldsymbol{\cdot} \Pi_{n \vert n-1}^N\\
@@ -760,16 +760,98 @@ Les paramètres du problème sont résumés dans le tableau \ref{paramètres2} :
 
  \paragraph{Résultats}
  Apres quelques efforts, nous avons été capables de faire fonctionner le 
- filtre particulaire. La figure \ref{filtre_part} présente l'évolution des
+ filtre particulaire. La figure \ref{navigation} présente l'évolution des
  particules. On constate bien que le groupe de particules se concentre autour de la 
  vraie position de l'avion. De plus, on observe clairement les étapes de redistribution,
- et l'on comprend bien comme elles agissent pour explorer l'espace des états à partir
+ et l'on comprend bien comment elles agissent pour explorer l'espace des états à partir
  des positions pertinentes connues.
-  
+ 
+
+ \begin{figure}[h!]
+   \centering
+   \begin{minipage}[t]{4cm}
+       \centering
+       \includegraphics[width=4cm]{TP4/10.png}
+   \end{minipage}
+   \begin{minipage}[t]{4cm}
+       \centering
+       \includegraphics[width=4cm]{TP4/20.png}
+   \end{minipage}
+   \begin{minipage}[t]{4cm}
+      \centering
+      \includegraphics[width=4cm]{TP4/30.png}
+  \end{minipage}
+  \begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/40.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/50.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/60.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/70.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/80.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/90.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/100.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/110.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/120.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/140.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/160.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/200.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/250.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/300.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/350.png}
+\end{minipage}
+\begin{minipage}[t]{4cm}
+   \centering
+   \includegraphics[width=4cm]{TP4/400.png}
+\end{minipage}
+\caption{Evolution de la distribution des particules au cours du temps}
+\label{navigation}
+\end{figure} 
 
 \subsection{Conclusion}
 
-\newpage
+\clearpage
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
 
