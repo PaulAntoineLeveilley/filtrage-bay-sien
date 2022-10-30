@@ -21,7 +21,7 @@ y_mnt = data["y_MNT"]
 fig = plt.figure()
 plt.title('Trajectoire et estimation par filtrage particulaire au cours du temps')
 
-# y_mnt_1 = np.flip(y_mnt[0])
+barycentre = np.mean(particules, axis =1)
 
 indice_y_min=350
 indice_y_max=550
@@ -41,16 +41,21 @@ mappable.set_array(h_red)
 ax.plot_surface(x, y, h_red, cmap=mappable.cmap, norm=mappable.norm, linewidth=0, antialiased=False)
 graph, = ax.plot(particules[0,:,0],particules[0,:,1],particules[0,:,2], linestyle="", marker="o",c='r',markersize='1')
 graph2, = ax.plot(trajectoire[:0,0],trajectoire[:0,1],trajectoire[:0,2],'g',linestyle="-")
+graph3,=ax.plot(barycentre[:0,0], barycentre[:0,1],barycentre[:0,2],'purple',linestyle="-")
+
+
 plt.title('Navigation par corrélation de terrain')
-plt.legend(['estimation par filtrage particulaire','trajectoire réelle'])
+plt.legend(['particules','trajectoire réelle','estimation par le barycentre des particules'])
 def updatefig(i):
     graph.set_data (particules[i,:,0],particules[i,:,1])
     graph.set_3d_properties(particules[i,:,2])
     graph2.set_data (trajectoire[:i,0],trajectoire[:i,1])
     graph2.set_3d_properties(trajectoire[:i,2])
-    # line2.set_data(trajectoire[:i,0],trajectoire[:i,1],trajectoire[:i,2])
-    return graph,graph2
+
+    graph3.set_data(barycentre[:i,0],barycentre[:i,1])
+    graph3.set_3d_properties(barycentre[:i,2])
+    return graph,graph2,graph3
 
 ani = animation.FuncAnimation(fig, updatefig, frames = 720,interval=50, blit=True)
-# ani.save('filtre_particulaire.gif',writer= 'imagemagik',fps = 10)
+ani.save('filtre_particulaire3D.gif',writer= 'imagemagik',fps = 10)
 plt.show()

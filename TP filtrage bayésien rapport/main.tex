@@ -9,9 +9,9 @@
 \usepackage{bbold}
 \usepackage{subcaption}
 
-\title{SOD333 - Rapport}
+\title{Filtrage bayésien optimal et approximation particulaire. Rapport de traveaux pratiques.}
 \author{Paul-Antoine Leveilley \& Mila Rocco}
-\date{Septembre 2022}
+\date{Octobre 2022}
 
 \begin{document}
 
@@ -20,6 +20,9 @@
 \newpage
 \tableofcontents
 \newpage
+\listoffigures
+\newpage
+
 
 
 
@@ -219,7 +222,7 @@ lorsque l'on propage des distributions conditionelles par exemple.
 
 \section{TP2 : Filtre de Kalman: poursuite d'un mobile}
 \subsection{Introduction}
-Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de l'estimer à partir d'observations partielles et bruitées.
+Dans ce TP, nous allons simuler la trajectoire d'un mobile, et tenter de la retrouver à partir d'observations partielles et bruitées.
 
 \subsubsection{Cadre général : filtre de Kalman}
 On se donne un système linéaire du type :
@@ -484,7 +487,7 @@ et :
 \[\frac{\partial h_{k}}{\partial y_{k}}= \frac{1}{\left(x_{k}-x_{k}^{o}\right)\left(1+\left( \frac{y_{k}-y_{k}^{o}}{x_{k}-x_{k}^{o}}  \right)^{2}\right)}\]
 \subsection{Simulations des dynamiques de l'observateur et de l'émetteur}
 Nous avons simulé la dynamique du système pour différents changements de cap de l'observateur, avec les paramètres du tableau \ref{paramètres}.
- Nous obtenons les tracés de la figure \ref{trajectoire}
+ Nous obtenons les tracés de la figure \ref{trajec}
 
 
 \begin{figure}[h!]
@@ -509,7 +512,7 @@ Nous avons simulé la dynamique du système pour différents changements de cap 
  \begin{figure}[h!]
   \centering
   \includegraphics[width = 15cm]{TP3/trajectoires.png}
-  \label{trajectoire}
+  \label{trajec}
   \caption{Trajectoires de l'émetteur et de l'observateur pour différentes valeurs de l'angle $\varphi$}
 \end{figure}
 
@@ -584,6 +587,7 @@ On peut voir que :
 \begin{align*}
    P(Y_n \in dy_{1:q} \vert X_n =x_n)&=P(V_n \in dy_{1:q}-h(x_n) \vert X_n = x_n)\\
    &=g(Y_n-h(x_n))dy_{1:q}\\
+   &=\psi_n(x_n)dy_{1:q}\\
 \end{align*}
 de sorte que : 
 \[\Pi_n(dx_{1:d}) = \frac{\psi_n(x_n)\Pi_{n \vert n-1}(dx_{1:d})}{\displaystyle{\int_{x_n \in \mathbb{R}^d} \psi_n(x_n)\,\Pi_{n \vert n-1}(dx_{1:d})}}\]
@@ -664,7 +668,7 @@ L'étape de prédiction échantillonnée devient alors :
 \begin{itemize}
    \item Générer $I$ selon $P(I=i)=\omega^i_n$
    \item Générer $\epsilon$ selon $K$.
-   \item Poser $\tilde{X}^{i,N}_{n \vert n-1}=X^{I,N}_{n \vert n-1} + h_{opt}\Gamma_k \epsilon$. Avec, $\Gamma_k^{T}\Gamma_k=Cov\left((X_{n \vert n-1}^{i,N})_{i\in \left\{1,...,N\right\}}\right) $
+   \item Rééchantilloner : prendre $\tilde{X}^{i,N}_{n \vert n-1}=X^{I,N}_{n \vert n-1} + h_{opt}\Gamma_k \epsilon$. Avec, $\Gamma_k^{T}\Gamma_k=Cov\left((X_{n \vert n-1}^{i,N})_{i\in \left\{1,...,N\right\}}\right) $
    \item Faire évoluer la particule : $ X_{n}^{i,N}= f(\tilde{X}^{i,N}_{n \vert n-1})$
 \end{itemize}
 
@@ -769,88 +773,97 @@ Les paramètres du problème sont résumés dans le tableau \ref{paramètres2} :
 
  \begin{figure}[h!]
    \centering
-   \begin{minipage}[t]{4cm}
+   \begin{minipage}[t]{5.5cm}
        \centering
-       \includegraphics[width=4cm]{TP4/10.png}
+       \includegraphics[width=5.5cm]{TP4/0_.png}
    \end{minipage}
-   \begin{minipage}[t]{4cm}
+   \begin{minipage}[t]{5.5cm}
        \centering
-       \includegraphics[width=4cm]{TP4/20.png}
+       \includegraphics[width=5.5cm]{TP4/10_.png}
    \end{minipage}
-   \begin{minipage}[t]{4cm}
+   \begin{minipage}[t]{5.5cm}
       \centering
-      \includegraphics[width=4cm]{TP4/30.png}
+      \includegraphics[width=5.5cm]{TP4/20_.png}
   \end{minipage}
-  \begin{minipage}[t]{4cm}
+  \begin{minipage}[t]{5.5cm}
    \centering
-   \includegraphics[width=4cm]{TP4/40.png}
+   \includegraphics[width=5.5cm]{TP4/40_.png}
 \end{minipage}
-\begin{minipage}[t]{4cm}
+\begin{minipage}[t]{5.5cm}
    \centering
-   \includegraphics[width=4cm]{TP4/50.png}
+   \includegraphics[width=5.5cm]{TP4/100_.png}
 \end{minipage}
-\begin{minipage}[t]{4cm}
+\begin{minipage}[t]{5.5cm}
    \centering
-   \includegraphics[width=4cm]{TP4/60.png}
+   \includegraphics[width=5.5cm]{TP4/200_.png}
 \end{minipage}
-\begin{minipage}[t]{4cm}
+\begin{minipage}[t]{5.5cm}
    \centering
-   \includegraphics[width=4cm]{TP4/70.png}
+   \includegraphics[width=5.5cm]{TP4/300_.png}
 \end{minipage}
-\begin{minipage}[t]{4cm}
+\begin{minipage}[t]{5.5cm}
    \centering
-   \includegraphics[width=4cm]{TP4/80.png}
+   \includegraphics[width=5.5cm]{TP4/400_.png}
 \end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/90.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/100.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/110.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/120.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/140.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/160.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/200.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/250.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/300.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/350.png}
-\end{minipage}
-\begin{minipage}[t]{4cm}
-   \centering
-   \includegraphics[width=4cm]{TP4/400.png}
-\end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/90.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/100.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/110.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/120.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/140.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/160.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/200.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/250.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/300.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/350.png}
+% \end{minipage}
+% \begin{minipage}[t]{4cm}
+%    \centering
+%    \includegraphics[width=4cm]{TP4/400.png}
+% \end{minipage}
 \caption{Evolution de la distribution des particules au cours du temps}
 \label{navigation}
 \end{figure} 
 
 \subsection{Conclusion}
-
+En conclusion, nous avons réussi à implémenter le 
+filtre particulaire pour le problème de la navigation par corrélation de terrain.
+Nous avons vu que dans ce genre de problèmes, il est important d'ajouter
+une étape de rééchantillonage lorsque la diversité des particules devient trop faible, pour explorer
+des zones de l'espace d'état que ne seraient jamais visitées par les particules autrement. Nous constatons que 
+les particules convergent rapidement vers la vraie position de l'avion. Nous observons tout de même un petit biais 
+sur l'estimation de la position. Peut être est-ce du aux arrondis que nous faisons dans la mesure de l'altitude. En effeet, nous ne disposons
+que d'un tableau de nombres comme modèle numérique de terrain. Une solution pourrait être d'interpoler au lieu d'arrondir. Toujours est il 
+que ce TP a été très intéressant et nous a permis de bien comprendre l'intérêt du filtre particulaire 
+dans le cas ou les mesures sont une fonction non linéaire de l'état.
 \clearpage
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
