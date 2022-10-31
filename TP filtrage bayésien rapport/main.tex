@@ -8,10 +8,15 @@
 \usepackage{amsfonts}
 \usepackage{bbold}
 \usepackage{subcaption}
+\usepackage{listings}
+\usepackage{appendix}
+\usepackage[french]{babel}
 
 \title{Filtrage bayésien optimal et approximation particulaire. Rapport de traveaux pratiques.}
 \author{Paul-Antoine Leveilley \& Mila Rocco}
 \date{Octobre 2022}
+
+
 
 \begin{document}
 
@@ -21,15 +26,6 @@
 \tableofcontents
 \newpage
 \listoffigures
-\newpage
-
-
-
-
-
-
-
-
 \newpage
 \section{TP1: Calcul d'une intégrale par méthode de Monte-Carlo, importance sampling.}
 \subsection{Introduction}
@@ -187,9 +183,9 @@ la loi normale centrée réduite. Nous présentons cela en figure \ref{TCL_imp}.
 
 \begin{figure}[h!]
    \centering
-   \label{TCL_imp}
    \caption{Comparaison de la densité de la loi $\mathcal{N}(0,1)$ et de l'erreur renormalisée de $\tilde{\mu}_{N}$ }
    \includegraphics[width = 10 cm]{TP1/TCL_importance_sampling.png}
+   \label{TCL_imp}
 \end{figure}
 
 Nous nous sommes intéressé à la probabilité d'acceptation dans notre méthode du rejet. En effet, la complexité de notre algorithme d'estimation dépend de cette probabilité.
@@ -416,13 +412,14 @@ de $X$ c'est ce que nous présentons en figure \ref{ellipse_conf}.
    \label{ellipse_conf}
    \includegraphics[width = 10cm]{TP2/ellipses_conf.png}
 \end{figure}
+\subsection{Conclusion}
 
 On constate qu'au départ, il existe une grande incertitude sur la position du mobile.
 Cette incertitude décroit pendant les premières itérations, jusqu'à ce qu'elle se stabilise autour d'une certaine valeur.
 Il est intéressant de noter que les ellipses de confiance à 95\% autour de 
 l'estimation de la trajectoire contiennent bien les points de la trajectoire réelle,
 comme attendu.
-\subsection{Conclusion}
+
 
 
 
@@ -512,8 +509,8 @@ Nous avons simulé la dynamique du système pour différents changements de cap 
  \begin{figure}[h!]
   \centering
   \includegraphics[width = 15cm]{TP3/trajectoires.png}
-  \label{trajec}
   \caption{Trajectoires de l'émetteur et de l'observateur pour différentes valeurs de l'angle $\varphi$}
+  \label{trajec}
 \end{figure}
 
 Grâce à ces dynamiques, nous sommes capables de calculer la Borne de Cramer Rao associée à cet estimateur de la position de l'émetteur. 
@@ -527,9 +524,17 @@ Nous présentons ces résultat en figure \ref{cramerrao}.
 \end{figure}
 
 \subsection{Optimisation de la valeur de $\varphi$}
-Pour trouver la valeur de $\varphi$ optimale, nous avons simplement testé toutes les valeurs entre $0^{\circ}$ et $360^{\circ}$, avec un pas de 
-$1^{\circ}$. Nous avons trouvé une valeur optimale de $\varphi = 109^{\circ}$, ce qui correspond à la trajectoire représentée en figure
+Pour trouver la valeur de $\varphi$ optimale, nous avons simplement testé toutes les valeurs entre $0^{\circ}$ et $360^{\circ}$ (\ref{crit}), avec un pas de 
+$1^{\circ}$. Nous avons trouvé une valeur optimale de $\varphi = 115^{\circ}$, ce qui correspond à la trajectoire représentée en figure
 \ref{opti_}. La borne de Cramer Rao associée est représentée en figure \ref{crameropti}. Le critère associé est un écart type sur la position de 128m.
+
+\begin{figure}
+   \centering
+   \includegraphics[width=10cm]{TP3/critère.png}
+   \caption{Critère en fonction de l'angle}
+   \label{crit}
+\end{figure}
+
 
 \begin{figure}[h!]
    \centering
@@ -805,50 +810,6 @@ Les paramètres du problème sont résumés dans le tableau \ref{paramètres2} :
    \centering
    \includegraphics[width=5.5cm]{TP4/400_.png}
 \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/90.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/100.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/110.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/120.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/140.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/160.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/200.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/250.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/300.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/350.png}
-% \end{minipage}
-% \begin{minipage}[t]{4cm}
-%    \centering
-%    \includegraphics[width=4cm]{TP4/400.png}
-% \end{minipage}
 \caption{Evolution de la distribution des particules au cours du temps}
 \label{navigation}
 \end{figure} 
@@ -867,5 +828,127 @@ dans le cas ou les mesures sont une fonction non linéaire de l'état.
 \clearpage
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
+\clearpage
+\begin{appendices}
+\section{Code python pour le filtrage particulaire}
+
+\subsection{Imports}
+\begin{lstlisting}[language=Python]
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+from scipy.io import loadmat
+from numpy import random
+from numpy.random import multinomial
+import numpy.linalg
+import math
+\end{lstlisting}
+
+\subsection{Chargement des données}
+\begin{lstlisting}[language=Python]
+data = loadmat('carte_centreMetres.mat');
+h_mnt = data["h_MNT"]
+h_mnt = np.flip(h_mnt,axis = 0)
+x_mnt = data["x_MNT"]
+y_mnt = data["y_MNT"]
+\end{lstlisting}
+
+
+\subsection{Redistribution}
+\begin{lstlisting}[language=Python]
+def redistribution(X,w):
+   w_normalise = w/np.sum(w)
+   shape = np.shape(X)
+   n = shape[0]
+   multinom = multinomial(n,w_normalise)
+   X_redistribue = []
+   for i in range(n):
+      for j in range(multinom[i]):
+         X_redistribue.append(X[i]) 
+   X_redistribue = np.array(X_redistribue)
+   return(X_redistribue)
+\end{lstlisting}
+
+
+\subsection{Réechantillonage}
+\begin{lstlisting}[language=Python]
+def reechantillonage(X_redistribue,h):
+   shape = np.shape(X_redistribue)
+   n = shape[0]
+   p = shape[1]
+   X_reechant = np.zeros((n,p))
+   cov = np.cov(X_redistribue.T)
+   gamma = np.linalg.cholesky(cov)
+   for i in range(n):
+       X_reechant[i]= X_redistribue[i] + 
+       h*np.dot(gamma,np.random.normal(0,1,p))
+   return(X_reechant)
+\end{lstlisting}
+
+\subsection{Dynamique}
+\begin{lstlisting}[language=Python]
+def dynamique(X0,phi,T):
+   n,= np.shape(X0)
+   X = np.zeros((T,n))
+   X[0]=X0
+   for i in range(1,T):
+       X[i]=np.dot(phi,X[i-1])
+   return(X)    
+\end{lstlisting}
+
+\subsection{Mesure bruitée}
+\begin{lstlisting}[language=Python]
+def mesure_bruitee(trajectoire,sigma_bruit):
+   n,p = np.shape(trajectoire)
+   mes = np.zeros(n)
+   for i in range(n):
+       mes[i]= mesure(trajectoire[i,0],trajectoire[i,1],trajectoire[i,2])
+       +np.random.normal(0,sigma_bruit)
+   return(mes)
+
+def indice(x,y):
+   delta_x =x_mnt[0,-1]-x_mnt[0,0]
+   delta_y = y_mnt[0,-1]-y_mnt[0,0]
+   indice_x = (x-x_mnt[0,0])*799/(delta_x)
+   indice_y = (y-y_mnt[0,0])*799/(delta_y)
+   return(max(0,min(int(indice_x),798)),798-max(0,min(int(indice_y),798)))
+
+def mesure(x,y,z):
+   indice_x,indice_y = indice(x,y)
+   return(z-h_mnt[indice_x,indice_y])
+\end{lstlisting}
+
+\subsection{Filtre particulaire}
+\begin{lstlisting}[language=Python]
+def vraissemblance(etat,observation):
+   return(noyeau_gaussien(observation-mesure(etat[0],etat[1],etat[2])))
+
+def noyeau_gaussien(x):
+   return(np.exp((-x**2)/(2*(sigma_bruit**2)))/np.sqrt(2*math.pi*sigma_bruit))
+
+def filtrage_particulaire(particules_0,mesure_traj,N_th,phi,T,h):
+   n,p = np.shape(trajectoire)
+   N_part,p_part = np.shape(particules_0)
+   particules = np.zeros((T,N_part,p))
+   particules[0]= particules_0
+   weights = np.ones(N_part)/N_part
+   particules_temp = np.zeros((N_part,p))
+   for i in range(1,T):
+       #evolution/prediction
+       particules_temp = np.zeros((N_part,p))
+       for j in range(N_part):
+           particules_temp[j] = np.dot(phi,particules[i-1,j])
+           #correction
+           weights[j]=vraissemblance(particules_temp[j],mesure_traj[i])
+       weights = weights/np.sum(weights)
+       X_redistribue = redistribution(particules_temp,weights)
+       critere = 1/np.sum(weights**2)
+       if critere <=N_th:
+           X_redistribue = reechantillonage(X_redistribue,h)
+       particules[i]=X_redistribue
+   return(particules)
+
+\end{lstlisting}
+\end{appendices}
 
 \end{document}
